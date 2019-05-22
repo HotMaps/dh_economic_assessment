@@ -10,7 +10,7 @@ from ..helper import create_zip_shapefiles
 import my_calculation_module_directory.CM.CM_TUW23.run_cm as CM23
 
 
-def calculation(output_directory, inputs_raster_selection, inputs_vector_selection, inputs_parameter_selection):
+def calculation(output_directory, inputs_raster_selection, inputs_parameter_selection):
     '''
     def calculation()
     inputs:

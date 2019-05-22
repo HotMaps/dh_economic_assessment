@@ -37,7 +37,6 @@ class TestAPI(unittest.TestCase):
 
         inputs_raster_selection = {}
         inputs_parameter_selection = {}
-        inputs_vector_selection = {}
         inputs_raster_selection["gfa_tot_curr_density"]  = save_path1
         inputs_raster_selection["heat_tot_curr_density"]  = save_path2
         
@@ -61,8 +60,7 @@ class TestAPI(unittest.TestCase):
         
         # register the calculation module a
         payload = {"inputs_raster_selection": inputs_raster_selection,
-                   "inputs_parameter_selection": inputs_parameter_selection,
-                   "inputs_vector_selection": inputs_vector_selection}
+                   "inputs_parameter_selection": inputs_parameter_selection}
 
 
         rv, json = self.client.post('computation-module/compute/', data=payload)
