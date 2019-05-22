@@ -27,18 +27,38 @@ class TestAPI(unittest.TestCase):
 
 
     def test_compute(self):
-        raster_file_path = 'tests/data/raster_for_test.tif'
+        raster_file1_path = 'tests/data/gfa_Wien.tif'
+        raster_file2_path = 'tests/data/hdm_Wien.tif'
         # simulate copy from HTAPI to CM
-        save_path = UPLOAD_DIRECTORY+"/raster_for_test.tif"
-        copyfile(raster_file_path, save_path)
+        save_path1 = UPLOAD_DIRECTORY+"/gfa_Wien.tif"
+        save_path2 = UPLOAD_DIRECTORY+"/hdm_Wien.tif"
+        copyfile(raster_file1_path, save_path1)
+        copyfile(raster_file2_path, save_path2)
 
         inputs_raster_selection = {}
         inputs_parameter_selection = {}
         inputs_vector_selection = {}
-        inputs_raster_selection["heat_tot_curr_density"]  = save_path
-        inputs_vector_selection["heating_technologies_eu28"]  = {}
-        inputs_parameter_selection["reduction_factor"] = 2
-
+        inputs_raster_selection["gfa_tot_curr_density"]  = save_path1
+        inputs_raster_selection["heat_tot_curr_density"]  = save_path2
+        
+        inputs_parameter_selection["investment_start_year"] = 2018
+        inputs_parameter_selection["investment_last_year"] = 2030
+        inputs_parameter_selection["depreciation_time"] = 30
+        inputs_parameter_selection["accumulated_energy_saving"] = 0.1
+        inputs_parameter_selection["dh_connection_rate_first_year"] = 0.3
+        inputs_parameter_selection["dh_connection_rate_last_year"] = 0.6
+        inputs_parameter_selection["interest_rate"] = 0.05
+        inputs_parameter_selection["grid_cost_ceiling"] = 15
+        inputs_parameter_selection["c1_innercity"] = 292.38
+        inputs_parameter_selection["c1_outercity"] = 218.78
+        inputs_parameter_selection["c1_park"] = 154.37
+        inputs_parameter_selection["c2_innercity"] = 2067.13
+        inputs_parameter_selection["c2_outercity"] = 1763.5
+        inputs_parameter_selection["c2_park"] = 1408.76
+        inputs_parameter_selection["full_load_hours"] = 3000
+        
+        
+        
         # register the calculation module a
         payload = {"inputs_raster_selection": inputs_raster_selection,
                    "inputs_parameter_selection": inputs_parameter_selection,

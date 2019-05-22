@@ -1,82 +1,125 @@
-
-from osgeo import gdal
-
-from ..helper import generate_output_file_tif, create_zip_shapefiles
-import time
-
-""" Entry point of the calculation module function"""
-
-#TODO: CM provider must "change this code"
-#TODO: CM provider must "not change input_raster_selection,output_raster  1 raster input => 1 raster output"
-#TODO: CM provider can "add all the parameters he needs to run his CM
-#TODO: CM provider can "return as many indicators as he wants"
-def calculation(output_directory, inputs_raster_selection,inputs_vector_selection, inputs_parameter_selection):
-    #TODO the folowing code must be changed by the code of the calculation module
-
-    # generate the output raster file
-    output_raster1 = generate_output_file_tif(output_directory)
+import os
+import sys
+path = os.path.dirname(os.path.abspath(__file__))
+if path not in sys.path:
+    sys.path.append(path)
+from ..helper import generate_output_file_tif
+from ..helper import generate_output_file_shp
+from ..helper import generate_output_file_csv
+from ..helper import create_zip_shapefiles
+import my_calculation_module_directory.CM.CM_TUW23.run_cm as CM23
 
 
-    #retrieve the inputs layes
-    input_raster_selection =  inputs_raster_selection["heat"]
+def calculation(output_directory, inputs_raster_selection, inputs_vector_selection, inputs_parameter_selection):
+    '''
+    def calculation()
+    inputs:
+        investment_start_year: year the investment starts e.g. 2018.
+        investment_last_year: year the investment starts e.g. 2030.
+        depreciation_time: depreciation time in years e.g. 25.
+        accumulated_energy_saving: accumulated energy saving at the end of investment period [0:1].
+        dh_connection_rate_first_year: share of demand covered by DH to the total demand in DH areas in the first year of investment [0:1].
+        dh_connection_rate_last_year: share of demand covered by DH to the total demand in DH areas in the last year of investment [0:1].
+        interest_rate: interest rate [0:1].
+        grid_cost_ceiling: The cost in EUR/MWh that should not be exceeded.
+        c1: the construction cost constant (EUR/m); default values for inner city area, outer city area and park areas are are 292.38, 218.78, 154.37 EUR/m, respectively.
+        c2: the construction cost coefficient (EUR/m2); default values for inner city area, outer city area and park areas are are 2067.13, 1763.5, 1408.76 EUR/m2, respectively.
+        full_load_hours: full load hours require for calculating the right pipe dimension, by default it is set to 3000.
+        in_raster_gfa: gross floor area map for the selected zone.
+        in_raster_hdm: heat density map for the selected zone.
+        
 
-    #retrieve the inputs layes
-    input_vector_selection =  inputs_vector_selection["heating_technologies_eu28"]
+    Outputs:
+        out_raster_maxDHdem: max demand should be covered by DH during the investment period [MWh].
+        out_raster_invest_Euro: distribution grid investment [EUR/MWh].
+        out_raster_hdm_last_year: heat density map at the end of investment period.
+        out_raster_dist_pipe_length: distribution grid pipeline length [m/m2].
+        out_raster_coh_area_bool: shows both economic and non-economic coherent areas.
+        out_raster_hdm_in_dh_reg_last_year: heat densities in the last year of investment within the coherent areas.
+        out_raster_labels,
+        out_shp_prelabel,
+        out_shp_label,
+        out_csv_solution
+    '''
+    # input parameters
+    investment_start_year = inputs_parameter_selection["investment_start_year"]
+    investment_last_year = inputs_parameter_selection["investment_last_year"]
+    depreciation_time = inputs_parameter_selection["depreciation_time"]
+    accumulated_energy_saving = inputs_parameter_selection["accumulated_energy_saving"]
+    dh_connection_rate_first_year = inputs_parameter_selection["dh_connection_rate_first_year"]
+    dh_connection_rate_last_year = inputs_parameter_selection["dh_connection_rate_last_year"]
+    interest_rate = inputs_parameter_selection["interest_rate"]
+    grid_cost_ceiling = inputs_parameter_selection["grid_cost_ceiling"]
+    c1 = [inputs_parameter_selection["c1_innercity"], inputs_parameter_selection["c1_outercity"], inputs_parameter_selection["c1_park"]]
+    c2 = [inputs_parameter_selection["c2_innercity"], inputs_parameter_selection["c2_outercity"], inputs_parameter_selection["c2_park"]]
+    full_load_hours = inputs_parameter_selection["full_load_hours"]
+    
+    
+    # input raster layers: (gfa:= gross floor area; hdm:= heat density map)
+    in_raster_gfa = inputs_raster_selection["gfa_tot_curr_density"]
+    in_raster_hdm = inputs_raster_selection["heat_tot_curr_density"]
+    
+    # output raster layers
+    out_raster_maxDHdem = generate_output_file_tif(output_directory)
+    out_raster_invest_Euro = generate_output_file_tif(output_directory)
+    out_raster_hdm_last_year = generate_output_file_tif(output_directory)
+    out_raster_dist_pipe_length = generate_output_file_tif(output_directory)
+    out_raster_coh_area_bool = generate_output_file_tif(output_directory)
+    out_raster_labels = generate_output_file_tif(output_directory)
+    
+    # output shapefiles
+    out_shp_prelabel = generate_output_file_shp(output_directory)
+    out_shp_label = generate_output_file_shp(output_directory)
+    out_shp_edges = generate_output_file_shp(output_directory)
+    out_shp_nodes = generate_output_file_shp(output_directory)
+    
+    # output csv files
+    out_csv_solution = generate_output_file_csv(output_directory)
 
+    output_summary = CM23.main(
+            investment_start_year,
+            investment_last_year,
+            depreciation_time,
+            accumulated_energy_saving,
+            dh_connection_rate_first_year,
+            dh_connection_rate_last_year,
+            interest_rate,
+            grid_cost_ceiling,
+            c1,
+            c2,
+            full_load_hours,
+            in_raster_gfa,
+            in_raster_hdm,
+            out_raster_maxDHdem,
+            out_raster_invest_Euro,
+            out_raster_hdm_last_year,
+            out_raster_dist_pipe_length,
+            out_raster_coh_area_bool,
+            out_raster_labels,
+            out_shp_prelabel,
+            out_shp_label,
+            out_shp_edges,
+            out_shp_nodes,
+            out_csv_solution,
+            output_directory
+            )
 
-    #retrieve the inputs all input defined in the signature
-    factor =  int(inputs_parameter_selection["reduction_factor"])
-
-
-    # TODO this part bellow must be change by the CM provider
-    ds = gdal.Open(input_raster_selection)
-    ds_band = ds.GetRasterBand(1)
-
-    #----------------------------------------------------
-    pixel_values = ds.ReadAsArray()
-    #----------Reduction factor----------------
-
-    pixel_values_modified = pixel_values/ float(factor)
-    hdm_sum  = pixel_values_modified.sum()
-
-    gtiff_driver = gdal.GetDriverByName('GTiff')
-    #print ()
-    out_ds = gtiff_driver.Create(output_raster1, ds_band.XSize, ds_band.YSize, 1, gdal.GDT_UInt16, ['compress=DEFLATE',
-                                                                                                         'TILED=YES',
-                                                                                                         'TFW=YES',
-                                                                                                         'ZLEVEL=9',
-                                                                                                         'PREDICTOR=1'])
-    out_ds.SetProjection(ds.GetProjection())
-    out_ds.SetGeoTransform(ds.GetGeoTransform())
-
-    ct = gdal.ColorTable()
-    ct.SetColorEntry(0, (0,0,0,255))
-    ct.SetColorEntry(1, (110,220,110,255))
-    out_ds.GetRasterBand(1).SetColorTable(ct)
-
-    out_ds_band = out_ds.GetRasterBand(1)
-    out_ds_band.SetNoDataValue(0)
-    out_ds_band.WriteArray(pixel_values_modified)
-
-    del out_ds
-    # output geneneration of the output
-    graphics = []
-    vector_layers = []
-
-    #TODO to create zip from shapefile use create_zip_shapefiles from the helper before sending result
-    #TODO exemple  output_shpapefile_zipped = create_zip_shapefiles(output_directory, output_shpapefile)
     result = dict()
-    result['name'] = 'CM Heat density divider'
-    result['indicator'] = [{"unit": "KWh", "name": "Heat density total divided by  {}".format(factor),"value": str(hdm_sum)}]
-    result['graphics'] = graphics
-    result['vector_layers'] = vector_layers
-    result['raster_layers'] = [{"name": "layers of heat_densiy {}".format(factor),"path": output_raster1} ]
+
+    out_shp_label = create_zip_shapefiles(output_directory, out_shp_label)
+    out_shp_edges = create_zip_shapefiles(output_directory, out_shp_edges)
+    out_shp_nodes = create_zip_shapefiles(output_directory, out_shp_nodes)
+    result['name'] = 'CM - District heating potential: economic assessment'
+    result["raster_layers"]=[
+          {"name": "heat demand density in the last year of the investment","path": out_raster_hdm_last_year, "type": "none", "legend": []}
+          ]
+    
+    result["vector_layers"]=[
+          {"name": "Coherent areas (economic and non-economic)","path": out_shp_label},
+          {"name": "Transmission lines","path": out_shp_edges},
+          {"name": "Connecting points of the coherent areas","path": out_shp_nodes}]
+
+    result["tabular"]=[{"name": "Summary of results","path": out_csv_solution}]
+    result['indicator'] = output_summary
+
     return result
-
-
-def colorizeMyOutputRaster(out_ds):
-    ct = gdal.ColorTable()
-    ct.SetColorEntry(0, (0,0,0,255))
-    ct.SetColorEntry(1, (110,220,110,255))
-    out_ds.SetColorTable(ct)
-    return out_ds
