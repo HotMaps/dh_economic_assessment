@@ -2,7 +2,6 @@
 CELERY_BROKER_URL_DOCKER = 'amqp://admin:mypass@rabbit:5672/'
 CELERY_BROKER_URL_LOCAL = 'amqp://localhost/'
 
-CELERY_BROKER_URL = CELERY_BROKER_URL_DOCKER
 CM_REGISTER_Q = 'rpc_queue_CM_register' # Do no change this value
 
 CM_NAME = 'District Heating Grid Investment'
@@ -11,9 +10,14 @@ RPC_Q = 'rpc_queue_CM_compute' # Do no change this value
 CM_ID = 3 # CM_ID is defined by the enegy research center of Martigny (CREM)
 PORT_LOCAL = int('500' + str(CM_ID))
 PORT_DOCKER = 80
-PORT = PORT_DOCKER
-TRANFER_PROTOCOLE ='http://'
 
+TRANFER_PROTOCOLE ='http://'
+#TODO ********************setup this URL depending on which version you are running***************************
+
+CELERY_BROKER_URL = CELERY_BROKER_URL_DOCKER
+PORT = PORT_DOCKER
+
+#TODO ********************setup this URL depending on which version you are running***************************
 INPUTS_CALCULATION_MODULE = [
         {'input_name': 'First year of investment',
          'input_type': 'input',
