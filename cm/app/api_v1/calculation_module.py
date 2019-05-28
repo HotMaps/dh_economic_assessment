@@ -56,8 +56,8 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
     
     
     # input raster layers: (gfa:= gross floor area; hdm:= heat density map)
-    in_raster_gfa = inputs_raster_selection["gfa_tot_curr_density"]
-    in_raster_hdm = inputs_raster_selection["heat_tot_curr_density"]
+    in_raster_gfa = inputs_raster_selection["gross_floor_area"]
+    in_raster_hdm = inputs_raster_selection["heat"]
     
     # output raster layers
     out_raster_maxDHdem = generate_output_file_tif(output_directory)
