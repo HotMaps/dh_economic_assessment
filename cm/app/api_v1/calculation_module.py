@@ -42,18 +42,20 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
         out_csv_solution
     '''
     # input parameters
-    investment_start_year = inputs_parameter_selection["investment_start_year"]
-    investment_last_year = inputs_parameter_selection["investment_last_year"]
-    depreciation_time = inputs_parameter_selection["depreciation_time"]
-    accumulated_energy_saving = inputs_parameter_selection["accumulated_energy_saving"]
-    dh_connection_rate_first_year = inputs_parameter_selection["dh_connection_rate_first_year"]
-    dh_connection_rate_last_year = inputs_parameter_selection["dh_connection_rate_last_year"]
-    interest_rate = inputs_parameter_selection["interest_rate"]
-    grid_cost_ceiling = inputs_parameter_selection["grid_cost_ceiling"]
+    investment_start_year = int(inputs_parameter_selection["investment_start_year"])
+    investment_last_year = int(inputs_parameter_selection["investment_last_year"])
+    depreciation_time = int(inputs_parameter_selection["depreciation_time"])
+    accumulated_energy_saving = float(inputs_parameter_selection["accumulated_energy_saving"])
+    dh_connection_rate_first_year = float(inputs_parameter_selection["dh_connection_rate_first_year"])
+    dh_connection_rate_last_year = float(inputs_parameter_selection["dh_connection_rate_last_year"])
+    interest_rate = float(inputs_parameter_selection["interest_rate"])
+    grid_cost_ceiling = float(inputs_parameter_selection["grid_cost_ceiling"])
     c1 = [inputs_parameter_selection["c1_innercity"], inputs_parameter_selection["c1_outercity"], inputs_parameter_selection["c1_park"]]
     c2 = [inputs_parameter_selection["c2_innercity"], inputs_parameter_selection["c2_outercity"], inputs_parameter_selection["c2_park"]]
-    full_load_hours = inputs_parameter_selection["full_load_hours"]
-    
+    full_load_hours = int(inputs_parameter_selection["full_load_hours"])
+    for i in range(3):
+        c1[i] = float(c1[i])
+        c2[i] = float(c2[i])
     
     # input raster layers: (gfa:= gross floor area; hdm:= heat density map)
     in_raster_gfa = inputs_raster_selection["gross_floor_area"]
