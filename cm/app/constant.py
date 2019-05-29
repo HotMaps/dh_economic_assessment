@@ -23,23 +23,23 @@ INPUTS_CALCULATION_MODULE = [
          'input_type': 'input',
          'input_parameter_name': 'investment_start_year',
          'input_value': 2018,
-         'input_unit': 'none',
+         'input_unit': ' ',
          'input_min': 2000,
-         'input_max': 2200, 'cm_id': CM_ID
+         'input_max': 2100, 'cm_id': CM_ID
          },
          {'input_name': 'Last year of investment',
          'input_type': 'input',
          'input_parameter_name': 'investment_last_year',
          'input_value': 2030,
-         'input_unit': 'none',
+         'input_unit': ' ',
          'input_min': 2000,
-         'input_max': 2200, 'cm_id': CM_ID
+         'input_max': 2100, 'cm_id': CM_ID
          },
          {'input_name': 'Depreciation time',
           'input_type': 'input',
           'input_parameter_name': 'depreciation_time',
           'input_value': 30,
-          'input_unit': 'none',
+          'input_unit': 'years',
           'input_min': 1,
           'input_max': 200, 'cm_id': CM_ID
           },
@@ -47,7 +47,7 @@ INPUTS_CALCULATION_MODULE = [
            'input_type': 'input',
            'input_parameter_name': 'accumulated_energy_saving',
            'input_value': 0.1,
-           'input_unit': 'none',
+           'input_unit': ' ',
            'input_min': 0,
            'input_max': 1, 'cm_id': CM_ID
            },
@@ -55,7 +55,7 @@ INPUTS_CALCULATION_MODULE = [
             'input_type': 'input',
             'input_parameter_name': 'dh_connection_rate_first_year',
             'input_value': 0.3,
-            'input_unit': 'none',
+            'input_unit': ' ',
             'input_min': 0,
             'input_max': 1, 'cm_id': CM_ID
             },
@@ -63,7 +63,7 @@ INPUTS_CALCULATION_MODULE = [
              'input_type': 'input',
              'input_parameter_name': 'dh_connection_rate_last_year',
              'input_value': 0.6,
-             'input_unit': 'none',
+             'input_unit': ' ',
              'input_min': 0,
              'input_max': 1, 'cm_id': CM_ID
              },
@@ -71,12 +71,12 @@ INPUTS_CALCULATION_MODULE = [
               'input_type': 'input',
               'input_parameter_name': 'interest_rate',
               'input_value': 0.05,
-              'input_unit': 'none',
+              'input_unit': ' ',
               'input_min': 0,
               'input_max': 1, 'cm_id': CM_ID
               },
               {'input_name': 'DH grid cost ceiling',
-               'input_type': 'range',
+               'input_type': 'input',
                'input_parameter_name': 'grid_cost_ceiling',
                'input_value': 15,
                'input_unit': 'EUR/MWh',
@@ -85,7 +85,7 @@ INPUTS_CALCULATION_MODULE = [
                'cm_id': CM_ID
                },
                {'input_name': 'Construction cost constant - Inner city',
-               'input_type': 'range',
+               'input_type': 'input',
                'input_parameter_name': 'c1_innercity',
                'input_value': 292.38,
                'input_unit': 'EUR/m',
@@ -94,7 +94,7 @@ INPUTS_CALCULATION_MODULE = [
                'cm_id': CM_ID
                },
                {'input_name': 'Construction cost constant - Outer city',
-               'input_type': 'range',
+               'input_type': 'input',
                'input_parameter_name': 'c1_outercity',
                'input_value': 218.78,
                'input_unit': 'EUR/m',
@@ -103,7 +103,7 @@ INPUTS_CALCULATION_MODULE = [
                'cm_id': CM_ID
                },
                {'input_name': 'Construction cost constant - Park',
-               'input_type': 'range',
+               'input_type': 'input',
                'input_parameter_name': 'c1_park',
                'input_value': 154.37,
                'input_unit': 'EUR/m',
@@ -112,7 +112,7 @@ INPUTS_CALCULATION_MODULE = [
                'cm_id': CM_ID
                },
                {'input_name': 'Construction cost coefficient - Inner city',
-               'input_type': 'range',
+               'input_type': 'input',
                'input_parameter_name': 'c2_innercity',
                'input_value': 2067.13,
                'input_unit': 'EUR/m2',
@@ -121,7 +121,7 @@ INPUTS_CALCULATION_MODULE = [
                'cm_id': CM_ID
                },
                {'input_name': 'Construction cost coefficient - Outer city',
-               'input_type': 'range',
+               'input_type': 'input',
                'input_parameter_name': 'c2_outercity',
                'input_value': 1763.5,
                'input_unit': 'EUR/m2',
@@ -130,7 +130,7 @@ INPUTS_CALCULATION_MODULE = [
                'cm_id': CM_ID
                },
                {'input_name': 'Construction cost coefficient - Park',
-               'input_type': 'range',
+               'input_type': 'input',
                'input_parameter_name': 'c2_park',
                'input_value': 1408.76,
                'input_unit': 'EUR/m2',
@@ -139,7 +139,7 @@ INPUTS_CALCULATION_MODULE = [
                'cm_id': CM_ID
                },
                {'input_name': 'Full load hours',
-               'input_type': 'range',
+               'input_type': 'input',
                'input_parameter_name': 'full_load_hours',
                'input_value': 3000,
                'input_unit': 'h',
