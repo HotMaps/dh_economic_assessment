@@ -38,7 +38,7 @@ def main(investment_start_year, investment_last_year, depreciation_time,
                         [1.9, 261], [3.6, 288], [6.1, 323], [9.8, 357],
                         [20,  426], [45,  564], [75,  701], [125, 839],
                         [190, 976], [19000, 97600]])
-    dist_grid_cost = grid_cost_ceiling/grid_factor
+    dist_grid_cost = float(grid_cost_ceiling)/float(grid_factor)
     
     # f2: calculate pixel based values
     f2_output_layers = [out_raster_maxDHdem, out_raster_invest_Euro,

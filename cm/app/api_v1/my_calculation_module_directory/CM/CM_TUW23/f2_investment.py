@@ -11,6 +11,8 @@ from CM.CM_TUW19 import run_cm as CM19
 
 
 def annuity(r, period):
+    period = int(period)
+    r = float(r)
     return ((1+r)**period - 1) / (r*(1+r)**period)
 
 
@@ -18,8 +20,11 @@ def cost_factors(c1, c2, PR):
     PR_park = (PR < 0.3).astype(int)
     PR_outercity = (PR >= 0.3).astype(int) * (PR < 0.5).astype(int)
     PR_innercity = (PR >= 0.5).astype(int)
-    cf1 = c1[0] * PR_park + c1[1] * PR_outercity + c1[2] * PR_innercity
-    cf2 = c2[0] * PR_park + c2[1] * PR_outercity + c2[2] * PR_innercity
+    PR_park = np.asarray(PR_park)
+    PR_outercity = np.asarray(PR_outercity)
+    PR_innercity = np.asarray(PR_innercity)
+    cf1 = float(c1[0]) * PR_park + float(c1[1]) * PR_outercity + float(c1[2]) * PR_innercity
+    cf2 = float(c2[0]) * PR_park + float(c2[1]) * PR_outercity + float(c2[2]) * PR_innercity
     del PR_park, PR_outercity, PR_innercity
     return cf1, cf2
 
@@ -39,7 +44,8 @@ def dh_demand(c1, c2, raster_plotratio, raster_hdm, start_year, last_year,
     pipe diameter is equal or greater than 0.
     the input heat density map should be in GWh/km2.
     '''
-    horizon = last_year - start_year + 1
+    horizon = int(last_year) - int(start_year) + 1
+    horizon = int(horizon)
     if horizon > depr_period:
         raise Warning('Study horizon is longer than depr_period of district. '
                       'The calculation will be done only till the end of '
@@ -47,9 +53,9 @@ def dh_demand(c1, c2, raster_plotratio, raster_hdm, start_year, last_year,
         horizon = depr_period
         remaining_years = 0
     else:
-        remaining_years = depr_period - horizon
+        remaining_years = int(depr_period) - int(horizon)
 
-    energy_reduction_factor = (1-accumulated_energy_saving)**(1/(horizon-1))
+    energy_reduction_factor = (1-float(accumulated_energy_saving))**(1/(horizon-1))
     hdm_ds = gdal.Open(raster_hdm)
     hdm_band = hdm_ds.GetRasterBand(1)
     hdm = hdm_band.ReadAsArray().astype(float)
@@ -75,12 +81,12 @@ def dh_demand(c1, c2, raster_plotratio, raster_hdm, start_year, last_year,
     q_max = np.zeros_like(q_tot)
     for i in range(horizon):
         q_tot = sparseDemand * energy_reduction_factor**i
-        q_new = q_tot * (dh_connection_rate_1st_year + i * (dh_connection_rate_last_year - dh_connection_rate_1st_year)/(horizon-1))
+        q_new = q_tot * (float(dh_connection_rate_1st_year) + i * (float(dh_connection_rate_last_year) - float(dh_connection_rate_1st_year))/(horizon-1))
         # q_new is a non-zero sparse matrix. The development of demand can be
         # checked by comparing just one element of q_new with q_max.
         if q_new[0] > q_max[0]:
             q_max = np.copy(q_new)
-        q += q_new / (1 + interest)**i
+        q += q_new / (1 + float(interest))**i
     if remaining_years > 0:
         alpha_horizon = annuity(interest, horizon-1)
         alpha_depr = annuity(interest, depr_period)

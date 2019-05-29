@@ -37,8 +37,8 @@ class TestAPI(unittest.TestCase):
 
         inputs_raster_selection = {}
         inputs_parameter_selection = {}
-        inputs_raster_selection["gfa_tot_curr_density"]  = save_path1
-        inputs_raster_selection["heat_tot_curr_density"]  = save_path2
+        inputs_raster_selection["gross_floor_area"]  = save_path1
+        inputs_raster_selection["heat"]  = save_path2
         
         inputs_parameter_selection["investment_start_year"] = 2018
         inputs_parameter_selection["investment_last_year"] = 2030
