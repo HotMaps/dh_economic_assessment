@@ -46,7 +46,7 @@ def dh_demand(c1, c2, raster_plotratio, raster_hdm, start_year, last_year,
     '''
     horizon = int(last_year) - int(start_year) + 1
     horizon = int(horizon)
-    if horizon > depr_period:
+    if horizon > int(depr_period):
         raise Warning('Study horizon is longer than depr_period of district. '
                       'The calculation will be done only till the end of '
                       'depr_period!')
