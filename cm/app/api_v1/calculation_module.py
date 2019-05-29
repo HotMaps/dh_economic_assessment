@@ -76,7 +76,7 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
     # output csv files
     out_csv_solution = generate_output_file_csv(output_directory)
 
-    output_summary = CM23.main(
+    output_summary, opt_term_cond = CM23.main(
             investment_start_year,
             investment_last_year,
             depreciation_time,
@@ -106,20 +106,19 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
 
     result = dict()
 
-    out_shp_label = create_zip_shapefiles(output_directory, out_shp_label)
-    out_shp_edges = create_zip_shapefiles(output_directory, out_shp_edges)
-    out_shp_nodes = create_zip_shapefiles(output_directory, out_shp_nodes)
-    result['name'] = 'CM - District heating potential: economic assessment'
-    result["raster_layers"]=[
-          {"name": "heat demand density in the last year of the investment","path": out_raster_hdm_last_year, "type": "none", "legend": []}
-          ]
-    
-    result["vector_layers"]=[
-          {"name": "Coherent areas (economic and non-economic)","path": out_shp_label},
-          {"name": "Transmission lines","path": out_shp_edges},
-          {"name": "Connecting points of the coherent areas","path": out_shp_nodes}]
+    if opt_term_cond:
+        out_shp_label = create_zip_shapefiles(output_directory, out_shp_label)
+        out_shp_edges = create_zip_shapefiles(output_directory, out_shp_edges)
+        out_shp_nodes = create_zip_shapefiles(output_directory, out_shp_nodes)
+        result['name'] = 'CM - District heating potential: economic assessment'
+        result["raster_layers"]=[
+              {"name": "heat demand density in the last year of the investment","path": out_raster_hdm_last_year, "type": "heat"}
+              ]
 
-    result["tabular"]=[{"name": "Summary of results","path": out_csv_solution}]
+        result["vector_layers"]=[
+              {"name": "Coherent areas (economic and non-economic)", "path": out_shp_label},
+              {"name": "Transmission lines","path": out_shp_edges}]
+
+        result["tabular"]=[{"name": "Summary of results","path": out_csv_solution}]
     result['indicator'] = output_summary
-
     return result

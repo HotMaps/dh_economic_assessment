@@ -112,4 +112,4 @@ def pre_opt(depreciation_time, interest_rate, grid_cost_ceiling,
                                 edge_list, geoTrans, out_shp_edges,
                                 out_shp_nodes, output_directory)
     sum_dist_pipeline = np.sum(dist_pipe_len * dh[:-6])
-    return dh[-6:], sum_dist_pipeline, np.sum(hdm_1st_arr), np.sum(hdm_arr), nr_coherent, np.sum(dh[:-6])
+    return dh[-6:], sum_dist_pipeline, np.sum(hdm_1st_arr), np.sum(hdm_arr), nr_coherent, np.sum(dh[:-6]), term_cond

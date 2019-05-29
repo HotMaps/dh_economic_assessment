@@ -48,31 +48,41 @@ def main(investment_start_year, investment_last_year, depreciation_time,
               dh_connection_rate_first_year, dh_connection_rate_last_year,
               depreciation_time, interest_rate, f2_output_layers)
     # f3: Determination of coherent areas based on the grid cost threshold.
-    distribuition_costs(pixT, DH_threshold, dist_grid_cost,
+    numLabels = distribuition_costs(pixT, DH_threshold, dist_grid_cost,
                         out_raster_hdm_last_year, out_raster_maxDHdem,
                         out_raster_invest_Euro, out_raster_coh_area_bool,
                         out_raster_labels)
-    # f4: pre-steps for providing input to the optimization function including
-    # calling various functions for calculating distance between coherent
-    # areas, optimization module, illustrating the transmission lines,
-    # polygonize the coherent areas.
-    (covered_demand, dist_inv, dist_spec_cost, trans_inv, trans_spec_cost,
-     trans_line_length), dist_pipe_len, heat_dem_1st, \
-     heat_dem_last, n_coh_areas, \
-     n_coh_areas_selected = pre_opt(depreciation_time, interest_rate,
-                                    grid_cost_ceiling, trans_line_cap_cost,
-                                    full_load_hours, in_raster_hdm,
-                                    out_raster_coh_area_bool,
-                                    out_raster_hdm_last_year,
-                                    out_raster_dist_pipe_length,
-                                    out_raster_maxDHdem, out_raster_labels,
-                                    out_raster_invest_Euro, out_shp_prelabel,
-                                    out_shp_label, out_shp_edges,
-                                    out_shp_nodes, out_csv_solution,
-                                    output_directory, polygonize_region=True)
+    if numLabels > 0 and numLabels < 101:
+        # numLabels = 0 : the grid cost ceiling is too low.
+        # numLabels > 100: too many coherent areas were detected!
+        # f4: pre-steps for providing input to the optimization function including
+        # calling various functions for calculating distance between coherent
+        # areas, optimization module, illustrating the transmission lines,
+        # polygonize the coherent areas.
+        (covered_demand, dist_inv, dist_spec_cost, trans_inv, trans_spec_cost,
+         trans_line_length), dist_pipe_len, heat_dem_1st, \
+         heat_dem_last, n_coh_areas, \
+         n_coh_areas_selected, \
+         opt_term_cond     = pre_opt(depreciation_time, interest_rate,
+                                        grid_cost_ceiling, trans_line_cap_cost,
+                                        full_load_hours, in_raster_hdm,
+                                        out_raster_coh_area_bool,
+                                        out_raster_hdm_last_year,
+                                        out_raster_dist_pipe_length,
+                                        out_raster_maxDHdem, out_raster_labels,
+                                        out_raster_invest_Euro, out_shp_prelabel,
+                                        out_shp_label, out_shp_edges,
+                                        out_shp_nodes, out_csv_solution,
+                                        output_directory, polygonize_region=True)
+    else:
+        covered_demand, dist_inv, dist_spec_cost, trans_inv, \
+        trans_spec_cost, trans_line_length, dist_pipe_len, \
+        heat_dem_1st, heat_dem_last, n_coh_areas, \
+        n_coh_areas_selected = np.zeros(11)
+        opt_term_cond = False
     # f9: returns the summary of results in a dictionary format
     output_summary = summary(covered_demand, dist_inv, dist_spec_cost,
                              trans_inv, trans_spec_cost, trans_line_length,
                              dist_pipe_len, heat_dem_1st, heat_dem_last,
-                             n_coh_areas, n_coh_areas_selected)
-    return output_summary
+                             n_coh_areas, n_coh_areas_selected, opt_term_cond, numLabels)
+    return output_summary, opt_term_cond

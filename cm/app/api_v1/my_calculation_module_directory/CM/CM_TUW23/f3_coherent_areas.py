@@ -47,12 +47,6 @@ def distribuition_costs(pixT, DH_threshold, dist_grid_cost,
         labels = None 
         nr_coherent = None
     labels, numLabels = measurements.label(coh_areas, structure=struct)
-    if numLabels == 0:
-        raise ValueError('For the provided grid cost ceiling, no district '
-                         'heating potential area can be realized!')
-    if numLabels > 100:
-        raise ValueError('For the given scenario, we found more than 100 '
-                         'coherent areas. Please reduce the size of your '
-                         'selection and run the scenario again!')
     CM19.main(out_raster_coh_area_bool, geo_transform, 'int8', coh_areas)
     CM19.main(out_raster_labels, geo_transform, "int16", labels)
+    return numLabels
