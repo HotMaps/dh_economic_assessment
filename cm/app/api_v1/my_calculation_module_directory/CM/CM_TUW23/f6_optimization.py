@@ -195,7 +195,7 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
     # np.savetxt('AddConection.csv', AddConection, delimiter=",")
     # np.savetxt('distance_matrix_final.csv', distance_matrix, delimiter=",")
     # print("Connections after additional Connections: %i" %(distance_matrix.size - fix_to_zero_index.shape[0] - n))
-
+    print("gurobi will be used")
     m = en.ConcreteModel()
     solver = SolverFactory('gurobi', solver_io='python')
     '''
@@ -422,11 +422,13 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
 
     done = False
     results = None
+
     # print(time.time() -st)
     while not done:
         # Solve once and add subtour elimination constraints if necessary
         # Finish when there are no more subtours
         results = solver.solve(m, report_timing=False, tee=False, logfile="gurobi.log")
+        print("gurobi results",results)
         # print(time.time() - st)
         # print(value(m.obj))
         graph = convertYsToNetworkx()
