@@ -40,21 +40,21 @@ class TestAPI(unittest.TestCase):
         inputs_raster_selection["gross_floor_area"]  = save_path1
         inputs_raster_selection["heat"]  = save_path2
         
-        inputs_parameter_selection["investment_start_year"] = 2018
-        inputs_parameter_selection["investment_last_year"] = 2030
-        inputs_parameter_selection["depreciation_time"] = 30
-        inputs_parameter_selection["accumulated_energy_saving"] = 0.1
-        inputs_parameter_selection["dh_connection_rate_first_year"] = 0.3
-        inputs_parameter_selection["dh_connection_rate_last_year"] = 0.6
-        inputs_parameter_selection["interest_rate"] = 0.05
-        inputs_parameter_selection["grid_cost_ceiling"] = 15
-        inputs_parameter_selection["c1_innercity"] = 292.38
-        inputs_parameter_selection["c1_outercity"] = 218.78
-        inputs_parameter_selection["c1_park"] = 154.37
-        inputs_parameter_selection["c2_innercity"] = 2067.13
-        inputs_parameter_selection["c2_outercity"] = 1763.5
-        inputs_parameter_selection["c2_park"] = 1408.76
-        inputs_parameter_selection["full_load_hours"] = 3000
+        inputs_parameter_selection["investment_start_year"] = "2018"
+        inputs_parameter_selection["investment_last_year"] = "2030"
+        inputs_parameter_selection["depreciation_time"] = "30"
+        inputs_parameter_selection["accumulated_energy_saving"] = "0.1"
+        inputs_parameter_selection["dh_connection_rate_first_year"] = "0.3"
+        inputs_parameter_selection["dh_connection_rate_last_year"] = "0.6"
+        inputs_parameter_selection["interest_rate"] = "0.05"
+        inputs_parameter_selection["grid_cost_ceiling"] = "15"
+        inputs_parameter_selection["c1_innercity"] = "292.38"
+        inputs_parameter_selection["c1_outercity"] = "218.78"
+        inputs_parameter_selection["c1_park"] = "154.37"
+        inputs_parameter_selection["c2_innercity"] = "2067.13"
+        inputs_parameter_selection["c2_outercity"] = "1763.5"
+        inputs_parameter_selection["c2_park"] = "1408.76"
+        inputs_parameter_selection["full_load_hours"] = "3000"
         
         
         

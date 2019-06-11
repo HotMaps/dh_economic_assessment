@@ -426,7 +426,7 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
     while not done:
         # Solve once and add subtour elimination constraints if necessary
         # Finish when there are no more subtours
-        results = solver.solve(m, report_timing=False, tee=False)
+        results = solver.solve(m, report_timing=False, tee=False, logfile="gurobi.log")
         # print(time.time() - st)
         # print(value(m.obj))
         graph = convertYsToNetworkx()
