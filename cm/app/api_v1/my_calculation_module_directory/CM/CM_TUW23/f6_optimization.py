@@ -480,5 +480,6 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
         trans_spec_cost, trans_line_length
     print ("term_cond",term_cond)
     print ("dh",dh)
+    dh = []
     print ("np.array(edge_list)",np.array(edge_list))
     return term_cond, dh, np.array(edge_list)
