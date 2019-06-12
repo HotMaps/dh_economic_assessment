@@ -113,7 +113,7 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
         print ("opt_term_cond")
         out_shp_label = create_zip_shapefiles(output_directory, out_shp_label)
         print ("opt_term_cond",out_shp_label)
-        out_shp_edges = create_zip_shapefiles(output_directory, out_shp_edges)
+       # out_shp_edges = create_zip_shapefiles(output_directory, out_shp_edges)
         print ("opt_term_cond",out_shp_edges)
 
         #out_shp_nodes = create_zip_shapefiles(output_directory, out_shp_nodes)
@@ -125,7 +125,7 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
               ]
         print ("raster_layers")
         result["vector_layers"]=[
-              {"name": "Coherent areas (economic and non-economic)", "path": out_shp_label},
+           #   {"name": "Coherent areas (economic and non-economic)", "path": out_shp_label},
               {"name": "Transmission lines","path": out_shp_edges}]
         print ("vector_layers")
 
