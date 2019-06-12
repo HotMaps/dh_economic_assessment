@@ -34,6 +34,7 @@ def validateJSON(value):
 
 
 def create_zip_shapefiles(output_directory, shafefile):
+    print ("shafefile",shafefile)
     os.chdir(output_directory)
     filename = shafefile.replace(output_directory+'/', "")
     zip_file = filename.replace('.shp', '.zip')
