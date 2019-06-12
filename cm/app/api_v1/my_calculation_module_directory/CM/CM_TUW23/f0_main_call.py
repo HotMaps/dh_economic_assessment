@@ -74,6 +74,7 @@ def main(investment_start_year, investment_last_year, depreciation_time,
                                         out_shp_label, out_shp_edges,
                                         out_shp_nodes, out_csv_solution,
                                         output_directory, polygonize_region=True)
+        print("pre_opt")
     else:
         covered_demand, dist_inv, dist_spec_cost, trans_inv, \
         trans_spec_cost, trans_line_length, dist_pipe_len, \

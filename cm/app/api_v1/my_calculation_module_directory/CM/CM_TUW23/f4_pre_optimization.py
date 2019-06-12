@@ -99,6 +99,7 @@ def pre_opt(depreciation_time, interest_rate, grid_cost_ceiling,
                'distribution costs - annualized [EUR]', 'area [ha]',
                'distribution line length [km]', grid_cost_header]
     df = df[headers]
+    print ("after optim")
     df.to_csv(out_csv_solution)
     if polygonize_region and term_cond:
         economic_bool = dh[:-6]
@@ -113,4 +114,5 @@ def pre_opt(depreciation_time, interest_rate, grid_cost_ceiling,
                                 edge_list, geoTrans, out_shp_edges,
                                 out_shp_nodes, output_directory)
     sum_dist_pipeline = np.sum(dist_pipe_len * dh[:-6])
+    print ("after optim")
     return dh[-6:], sum_dist_pipeline, np.sum(hdm_1st_arr), np.sum(hdm_arr), nr_coherent, np.sum(dh[:-6]), term_cond
