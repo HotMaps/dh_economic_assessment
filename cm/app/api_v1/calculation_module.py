@@ -112,9 +112,13 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
     if opt_term_cond:
         print ("opt_term_cond")
         out_shp_label = create_zip_shapefiles(output_directory, out_shp_label)
+        print ("opt_term_cond",out_shp_label)
         out_shp_edges = create_zip_shapefiles(output_directory, out_shp_edges)
-        out_shp_nodes = create_zip_shapefiles(output_directory, out_shp_nodes)
-        result['name'] = 'economic assessment'
+        print ("opt_term_cond",out_shp_edges)
+
+        #out_shp_nodes = create_zip_shapefiles(output_directory, out_shp_nodes)
+        print ("opt_term_cond")
+        result['name'] = 'CM - District heating potential: economic assessment'
         print ("name")
         result["raster_layers"]=[
               {"name": "heat demand density in the last year of the investment","path": out_raster_hdm_last_year, "type": "heat"}
