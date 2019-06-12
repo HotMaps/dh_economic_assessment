@@ -106,27 +106,32 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
             output_directory
             )
 
+
     result = dict()
 
     if opt_term_cond:
 
         out_shp_label = create_zip_shapefiles(output_directory, out_shp_label)
 
-        #TODO DEBUG THIS      out_shp_edges = create_zip_shapefiles(output_directory, out_shp_edges)
+       # out_shp_edges = create_zip_shapefiles(output_directory, out_shp_edges)
+
 
         #out_shp_nodes = create_zip_shapefiles(output_directory, out_shp_nodes)
 
         result['name'] = 'CM - District heating potential: economic assessment'
+
         result["raster_layers"]=[
               {"name": "heat demand density in the last year of the investment","path": out_raster_hdm_last_year, "type": "heat"}
               ]
+
         result["vector_layers"]=[
-           #   {"name": "Coherent areas (economic and non-economic)", "path": out_shp_label},
-              {"name": "Transmission lines","path": out_shp_edges}]
+              {"name": "Coherent areas (economic and non-economic)", "path": out_shp_label}]
+             # {"name": "Transmission lines","path": out_shp_edges}]
+
 
         result["tabular"]=[{"name": "Summary of results","path": out_csv_solution}]
-
-
+        print ("tabular")
+    print ("output_summary",output_summary)
     result['indicator'] = output_summary
-
+    print ("result",result)
     return result
