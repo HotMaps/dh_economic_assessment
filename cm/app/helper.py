@@ -32,15 +32,17 @@ def validateJSON(value):
     return response
 
 
-def create_zip_shapefiles(output_directory, shafefile):
-    print ("shafefile",shafefile)
+def create_zip_shapefiles(output_directory, shapefile):
+    print ("shafefile",shapefile)
     os.chdir(output_directory)
     # determine file name
-    filename = shafefile.replace(output_directory+'/', "")
-    filename = filename.encode("utf-8") # Get what we need
-    import time
-    zinfo = zipfile.ZipInfo(filename, time.localtime(os.getmtime(filename))[0:6])
-    print ("shafefile",shafefile)
+    import sys
+    sys.getfilesystemencoding = lambda: 'UTF-8'
+    filename = shapefile.replace(output_directory+'/', "")
+
+
+
+    print ("shafefile",shapefile)
     zip_file = filename.replace('.shp', '.zip')
     shp_file = filename
     print ("shp_file",shp_file)
