@@ -117,9 +117,9 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
               {"name": "heat demand density in the last year of the investment","path": out_raster_hdm_last_year, "type": "heat"}
               ]
 
-        #result["vector_layers"]=[
-         #     {"name": "Coherent areas (economic and non-economic)", "path": out_shp_label},
-          #    {"name": "Transmission lines","path": out_shp_edges}]
+        result["vector_layers"]=[
+             {"name": "Coherent areas (economic and non-economic)", "path": out_shp_label},
+              {"name": "Transmission lines","path": out_shp_edges}]
 
         result["tabular"]=[{"name": "Summary of results","path": out_csv_solution}]
     result['indicator'] = output_summary
