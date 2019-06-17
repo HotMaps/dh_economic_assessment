@@ -1,12 +1,11 @@
 import uuid
 import ast
 import json
-import zipfile
+import sys
 import os
+sys.setdefaultencoding('UTF8')
 
-import shutil
 from zipfile import ZipFile
-from os import path
 
 import zipfile
 def generate_output_file_tif(output_directory):
@@ -36,7 +35,11 @@ def validateJSON(value):
 def create_zip_shapefiles(output_directory, shafefile):
     print ("shafefile",shafefile)
     os.chdir(output_directory)
+    # determine file name
     filename = shafefile.replace(output_directory+'/', "")
+    filename = filename.encode("utf-8") # Get what we need
+    import time
+    zinfo = zipfile.ZipInfo(filename, time.localtime(os.getmtime(filename))[0:6])
     print ("shafefile",shafefile)
     zip_file = filename.replace('.shp', '.zip')
     shp_file = filename
