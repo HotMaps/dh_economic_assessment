@@ -1,9 +1,9 @@
 import uuid
 import ast
 import json
-import sys
+
 import os
-sys.setdefaultencoding('UTF8')
+
 
 from zipfile import ZipFile
 
