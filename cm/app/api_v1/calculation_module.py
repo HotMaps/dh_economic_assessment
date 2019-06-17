@@ -123,4 +123,5 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
 
         result["tabular"]=[{"name": "Summary of results","path": out_csv_solution}]
     result['indicator'] = output_summary
+    print ('out_raster_hdm_last_year',out_raster_hdm_last_year)
     return result
