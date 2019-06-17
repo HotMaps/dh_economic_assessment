@@ -48,19 +48,19 @@ def create_zip_shapefiles(output_directory, shafefile):
     shx_file = filename.replace('.shp', '.shx')
     print ("shx_file",shx_file)
     zf = ZipFile(zip_file, 'w')
-    print ("zf",shx_file)
+    print ("zf",zf)
 
-    try:
-        zf.write(dbf_file)
-        zf.write(prj_file)
-        zf.write(shx_file)
-        zf.write(shp_file)
+    #try:
+    zf.write(dbf_file)
+    zf.write(prj_file)
+    zf.write(shx_file)
+    zf.write(shp_file)
 
 
-    finally:
-        print ("zfclose")
-        zf.close()
-
+    #finally:
+    print ("zfclose")
+    zf.close()
+    print ("zip_file ",zip_file)
     return zip_file
 
 def zipdir(path, ziph):
