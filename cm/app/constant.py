@@ -161,7 +161,7 @@ SIGNATURE = {
     "type_layer_needed": [
         "heat","gross_floor_area"
     ],
-    "cm_url": "Do not add something",
+    "cm_url": "Do not add anything",
     "cm_description": "this computation module can be used for the economic assessment of DH potential and DH grid investment.",
     "cm_id": CM_ID,
     'inputs_calculation_module': INPUTS_CALCULATION_MODULE

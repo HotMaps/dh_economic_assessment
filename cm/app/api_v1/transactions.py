@@ -132,8 +132,9 @@ def compute():
     # here is the inputs layers and parameters
     inputs_raster_selection = helper.validateJSON(data["inputs_raster_selection"])
 
-
+    print ('inputs_raster_selection', inputs_raster_selection)
     inputs_parameter_selection = helper.validateJSON(data["inputs_parameter_selection"])
+
 
 
 
