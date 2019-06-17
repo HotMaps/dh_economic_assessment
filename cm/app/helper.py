@@ -37,12 +37,19 @@ def create_zip_shapefiles(output_directory, shafefile):
     print ("shafefile",shafefile)
     os.chdir(output_directory)
     filename = shafefile.replace(output_directory+'/', "")
+    print ("shafefile",shafefile)
     zip_file = filename.replace('.shp', '.zip')
     shp_file = filename
+    print ("shp_file",shp_file)
     dbf_file = filename.replace('.shp', '.dbf')
+    print ("dbf_file",dbf_file)
     prj_file = filename.replace('.shp', '.prj')
+    print ("prj_file",prj_file)
     shx_file = filename.replace('.shp', '.shx')
+    print ("shx_file",shx_file)
     zf = ZipFile(zip_file, 'w')
+    print ("zf",shx_file)
+
     try:
         zf.write(dbf_file)
         zf.write(prj_file)
@@ -51,6 +58,7 @@ def create_zip_shapefiles(output_directory, shafefile):
 
 
     finally:
+        print ("zfclose")
         zf.close()
 
     return zip_file

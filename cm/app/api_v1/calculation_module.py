@@ -109,8 +109,8 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
     result = dict()
 
     if opt_term_cond:
-        #out_shp_label = create_zip_shapefiles(output_directory, out_shp_label)
-        #out_shp_edges = create_zip_shapefiles(output_directory, out_shp_edges)
+        out_shp_label = create_zip_shapefiles(output_directory, out_shp_label)
+        out_shp_edges = create_zip_shapefiles(output_directory, out_shp_edges)
         #out_shp_nodes = create_zip_shapefiles(output_directory, out_shp_nodes)
         result['name'] = 'CM - District heating potential: economic assessment'
         result["raster_layers"]=[
