@@ -9,7 +9,7 @@ from ..helper import generate_output_file_csv
 from ..helper import create_zip_shapefiles
 import my_calculation_module_directory.CM.CM_TUW23.run_cm as CM23
 
-
+from ..constant import CM_NAME
 def calculation(output_directory, inputs_raster_selection, inputs_parameter_selection):
     '''
     def calculation()
@@ -112,7 +112,7 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
         out_shp_label = create_zip_shapefiles(output_directory, out_shp_label)
         out_shp_edges = create_zip_shapefiles(output_directory, out_shp_edges)
         #out_shp_nodes = create_zip_shapefiles(output_directory, out_shp_nodes)
-        result['name'] = 'CM - District heating potential: economic assessment'
+        result['name'] = CM_NAME
         result["raster_layers"]=[
               {"name": "heat demand density in the last year of the investment","path": out_raster_hdm_last_year, "type": "heat"}
               ]
