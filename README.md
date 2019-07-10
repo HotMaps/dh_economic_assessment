@@ -1,17 +1,7 @@
 
 # Calculation module documentation and guidelines
 
-**Important information:**
-
-This version comes with **Gurobi** solver installed.
-
-In order to use Gurobi please ask for a licence file at HES-SO development team. This file has to be placed in the following directory using the name *gurobi.lic*:
-
-```
-/cm/gurobi_install/gurobi.lic
-```
-
-**Requirements:**
+**requirements:**
 
 - Having GIT command installed on your computer
 - Having a Python version >= 3.5
@@ -45,7 +35,7 @@ _______________________________
 
 The CM can run on its own, but when it is on the same network as the Hotmaps toolbox API (HTAPI), it will be automatically detected.
 Using Celery queue to register, HTAPI contains heartbeat that will Check at anytime if a calculation is running or not. That means the achitecture for CMs is working in realtime
-
+ 
 **Calculation module regitration**
 
 the HTAPI will retrieve the CM SIGNATURE and modify the frontend to allow the user to use the CM and modify the user interface with the inputs it needs to be ran.
@@ -90,12 +80,12 @@ git add .
 git commit -m "first commit" #update changes
 git push -u origin master # push the changes (minimum code for run) .
 
-```
+``` 
 
 2. Start coding, switch branch from master to develop
 ```bash
 git checkout -b develop
-```
+``` 
 
 3. After coding
 
@@ -104,7 +94,7 @@ git add .
 git commit -m "message to describe the changes"
 git push origin develop
 
-```
+``` 
 
 
 4. Updating code with the base calculation module (BCM) code
@@ -112,7 +102,7 @@ git push origin develop
 ```bash
 git pull upstream master
 
-```
+``` 
 
 If you encounter any issue like GIT conflict please contact CREM.
 
@@ -125,13 +115,13 @@ After testing your calculation module you can update the release branch(master b
 git fetch && git checkout master # retrieved master branch
 git merge develop # update the changes from develop to master
 git push origin master # push changes on master branch
-```
+``` 
 now tag your version then take a snapshot on your current version
 ```bash
 git fetch && git checkout master # retrieved master branch
 git merge develop # update the changes from develop to master
 git push origin master # push changes on master branch
-```
+``` 
 
 ### Application Structure:
 
@@ -192,6 +182,7 @@ cm/
 * `app/api_v1/transactions.py ` contains all the requests that allows to interacted with the CM
 * `app/constant.py ` contains the constants of the applications the most important constant is the SIGNATURE
 
+
 ***************************************************
 
 *****INPUTS CALCULATION MODULE FIELD*****
@@ -206,33 +197,32 @@ In this section it's explain how to handle the differents kind of inputs
 
 Signature describes the calculation module needed parameters and how to use it. This signature can be found in **constants.py** file. the SIGNATURE must be modified by the developer this signature can be divided into 2 parts,
 see bellow:
-
-
-​    
-​    INPUTS_CALCULATION_MODULE=  [
-​        { 'input_name': 'Reduction factor',
-​          'input_type': 'input',
-​          'input_parameter_name': 'reduction_factor',
-​          'input_value': 1,
-​          'input_unit': 'none',
-​          'input_min': 1,
-​          'input_max': 10
-​            , 'cm_id': CM_ID
-​          },
-​        { 'input_name': 'Blablabla',
-​          'input_type': 'range',
-​          'input_parameter_name': 'bla',
-​          'input_value': 50,
-​          'input_unit': '',
-​          'input_min': 10,
-​          'input_max': 1000,
-​          'cm_id': CM_ID
-​          }
-​    ]
-
+   
+    
+    
+    INPUTS_CALCULATION_MODULE=  [
+        { 'input_name': 'Reduction factor',
+          'input_type': 'input',
+          'input_parameter_name': 'multiplication_factor',
+          'input_value': 1,
+          'input_unit': 'none',
+          'input_min': 1,
+          'input_max': 10
+            , 'cm_id': CM_ID
+          },
+        { 'input_name': 'Blablabla',
+          'input_type': 'range',
+          'input_parameter_name': 'bla',
+          'input_value': 50,
+          'input_unit': '',
+          'input_min': 10,
+          'input_max': 1000,
+          'cm_id': CM_ID
+          }
+    ]
+    
   
-
-
+    
     SIGNATURE = {
         "category": "Buildings",
         "cm_name": CM_NAME,
@@ -247,7 +237,7 @@ see bellow:
         "cm_id": CM_ID,
         'inputs_calculation_module': INPUTS_CALCULATION_MODULE
     }
-
+    
 ***SIGNATURE FIELDS***
 
 The signature contained some parameters that are needed by the main webservice HTAPI for the data exchange:
@@ -255,7 +245,7 @@ The signature contained some parameters that are needed by the main webservice H
  **category:**
 
 This is the category of the calculation module
-
+ 
 **cm name:**
 
 This is the name of the calculation module that will be displayed on the frontend Graphical user interface(GUI)
@@ -275,10 +265,10 @@ Layers needed to run the calculation module
 ```
  When HTAPI will be compute a CM, it will send a python dictionnary named  inputs_raster_selection in which there is a key the name of the layer for example heat_curr_density_tot and a value the name of the files generated by HATPI  
  by using this value CM can directly retrieve a clipped dataset 
-
-
+ 
+ 
  **vectors needed:**
-
+ 
  Vectors needed to run the calculation module
  please find an example input vectors_needed: 
  ```bash
@@ -288,8 +278,8 @@ Layers needed to run the calculation module
         ],
  ```
   Now if you request "inputs_vector_selection['heating_technologies_eu28']" the output will be  
-
-
+  
+ 
    ```bash
       
  {"heating_technologies_eu28": [{
@@ -348,9 +338,9 @@ Layers needed to run the calculation module
    ```
 
   When HTAPI will be compute a CM, it will send a python dictionnary named  inputs_vector_selection in which there is a key the name of the vector requested for example heating_technologies_eu28 and an array of json dictionnary as a value the name of the files generated by HATPI  
-
+ 
 **type layers needed:**
-
+ 
  this parameter(type_layer_needed) will need the type of information needed as input for instance for the gross_floor_area type the user can choose on the frontend GUI gfa_nonres_curr_density or gfa_res_curr_density
  #TODO: type_layer_needed will replace the layers_needed in the futur
  also it allows to handle symbologie
@@ -389,15 +379,15 @@ Unique identifier that is defined by the WP4 leader
    - NUTS 3
    - LAU 2 
    - Hectare
-
-
+ 
+ 
   ```bash
         "authorized_scale":["NUTS 2","NUTS 0","Hectare"],
        
   ```
 
-
-​    
+       
+    
 
 ***CALCULATION MODULE GRAPHIC USER INTERFACE INPUTS***
 
@@ -407,19 +397,18 @@ The purpose of this part is giving the ability to the developer to build is own 
  **Input name:**
 
  it is the name of the CM that will be displayed on the frontend (User interface)
-
+ 
  **Input type:**
 
  The input is the graphical control element that user need to access enter data. There are five possible inputs, see https://getuikit.com/docs/form for more information about the implementation of the frontend GUI
  - input:
    
-
  ![alt text][logoinput]
            
 
 This is a textbox where the user can type a value. 
  - select: 
-
+ 
  ![alt text][logoselect]
            
  **exemple:**
@@ -437,40 +426,40 @@ This is a textbox where the user can type a value.
     'input_max': 'none', 'cm_id': CM_ID
      },
  
- ```
+  ```
 
 
  This is a drop down menu that allows the user to choose one value from a list.
  - radio :
-
-
+ 
+  
    ![alt text][logoradio]
            
 
  It allows the user to choose only one of a predefined set of mutually exclusive options.
  - checkbox 
-
  
-
+ 
+ 
  ![alt text][logocheckbox]
-
+ 
  This graphical component allows the user to choose between one of two possible mutually exclusive options
            
-[logocheckbox]: https://upload.wikimedia.org/wikipedia/commons/2/2f/Checkbox2.png
+[logocheckbox]: https://upload.wikimedia.org/wikipedia/commons/2/2f/Checkbox2.png   ""  
  - range
-
-
+ 
+  
  ![alt text][logorange]
-
+ 
 The range is graphical control element with which a user may set a value by moving an indicator.
            
-[logorange]: https://upload.wikimedia.org/wikipedia/commons/e/ed/Slider_%28computing%29_example.PNG
-
-
+[logorange]: https://upload.wikimedia.org/wikipedia/commons/e/ed/Slider_%28computing%29_example.PNG ""
+ 
+ 
 **Input Parameter Name:**
 
  It's the input parameter name the CM needs to retrieve for calculations 
-
+   
 **input value:**
 
 
@@ -490,7 +479,7 @@ This parameter allows to categorize input in the user inteface. the value needed
 ```python
              {'input_name': 'Reduction factor',
               'input_type': 'input',
-              'input_parameter_name': 'reduction_factor',
+              'input_parameter_name': 'multiplication_factor',
               'input_value': 1,
               'input_priority': 0,
               'input_unit': 'none',
@@ -500,7 +489,8 @@ This parameter allows to categorize input in the user inteface. the value needed
             
 ```
 
-*******************************
+
+*******************************   
 ***CALCULATION MODULE OUTPUTS:***
 
 
@@ -593,13 +583,12 @@ this indicators will be displayed on the result panel of the frontend.
 
  **Structure of raster as output:**
  ---------------------------------
-
+ 
  - **raster_layers (Array):** Array of raster layer
      - **name (string):** Name to be displayed on the frontend
      - **path (string):** path generated of the geotif file
      - **type (string):** this is the type of layer generated
      
-
  the path must be generated on the first lines of calculation() function found in calculation_module.py using the function generate_output_file_tif() which need the output directory as an argument
  **exemple:** 
   ```python
@@ -608,7 +597,7 @@ this indicators will be displayed on the result panel of the frontend.
             output_raster_path_tif_3 = generate_output_file_tif(output_directory)
   ```
   All the layers outputs must be retrieved and added on the *raster_layers* array after they have been created by the calculation module provider functions
-
+ 
  ```python
              "raster_layers":[
                               {"name": "heat density layer divide by 2","path": output_raster_path_tif_1,"type": "heat"},
@@ -617,17 +606,29 @@ this indicators will be displayed on the result panel of the frontend.
                               
               
  ```
+ **Generating a custom symbology**
+ --------------------------------
+ if an unknown type of layer is generated(layer that is not of type heat,gross_floor_area, building_volume,solar_optimal_tota ) a new field must be created,
+ the field **"symbology"** and the raster must be set on type "custom". the field symbology must contains the RGB colors, which are values between 0 - 255, the opacity which are  values between 0 - 1,  the value of range  defined and the label of range  defined
+ 
+  ```python
+              "raster_layers":[
+                               {"name": "district heating coherent areas","path": output_raster1, "type": "custom", "symbology": [{"red":250,"green":159,"blue":181,"opacity":0.8,"value":"1","label":"DH Areas"}]}]
+                             
+                               
+               
+  ```
+ 
   **Structure of vector as output:**
   ----------------------------------
-
+  
   - **vector_layers (Array):** Array of vector layer
       - **name (string):** name to be displayed on the frontend
       - **path (string):** path generated of the vector file
       - **type (string):** this is the type of layer generated
       
-
   The path must be generated on the first lines of calculation() function found in calculation_module.py using the function generate_output_file_shp() which need the output directory as an argument
-
+ 
  **exemple:** 
 ```python
     output_shp_1 = generate_output_file_shp(output_directory)
@@ -638,9 +639,9 @@ this indicators will be displayed on the result panel of the frontend.
      output_shp_zipped_1 = create_zip_shapefiles(output_directory, output_shp_1)
 
 ```
-
+    
    All the layers outputs must be retrieved and added on the *vector_layers* array after they have been created by the calculation module provider functions and compress with the function create_zip_shapefiles()
-
+  
   ```python
               "vector_layers":[
                                 {"name": "wwtp_1","path": output_shp_zipped_1,"type": "wwtp"},
@@ -652,13 +653,12 @@ this indicators will be displayed on the result panel of the frontend.
   ```
  **Structure of csv as output:**
  ---------------------------------
-
+ 
  - **csv_files (Array):** Array of csv layer
      - **name (string):** Name to be displayed on the frontend
      - **path (string):** path generated of the csv file
 
      
-
  the path must be generated on the first lines of calculation() function found in calculation_module.py using the function generate_output_file_csv() which need the output directory as an argument
  **exemple:** 
   ```python
@@ -667,7 +667,7 @@ this indicators will be displayed on the result panel of the frontend.
             output_csv_path_3 = generate_output_file_csv(output_directory)
   ```
   All the csv outputs must be retrieved and added on the *csv_files* array after they have been created by the calculation module provider functions
-
+ 
  ```python
              "csv_files":[
                               {"name": "csv 1","path": output_csv_path_1},
@@ -684,28 +684,27 @@ In this part it's describes how to create graphics that will be displayed of the
 
  **Structure of charts as output:**
  ----------------------------------
-
+ 
 - **charts (Array):** Array of chart
-
+ 
     - **type (string) :**  this is the type of graphic that will be display Type of chart (possible values: 'bar', 'line', 'radar', 'pie', 'polarArea', 'bubble')
     
         - **line:** A line chart or line graph is a type of chart which displays information as a series of data points called 'markers' connected by straight line segment
-        
-        
-      ![alt text][line]
-      
-   - **bar:** A bar chart or bar graph is a chart or graph that presents categorical data with rectangular 
-       bars with heights or lengths proportional to the values that they represent.
+   
+        ![alt text][line]
+   
+        - **bar:** A bar chart or bar graph is a chart or graph that presents categorical data with rectangular 
+   bars with heights or lengths proportional to the values that they represent.
         ![alt text][bar]
-    - **radar:** A radar chart is a way of showing multiple data points and the variation between them.   
-       ![alt text][radar]
-    - **pie:** A pie chart is divided into segments, the arc of each segment shows the proportional value of each piece of data..
+        - **radar:** A radar chart is a way of showing multiple data points and the variation between them.   
+   ![alt text][radar]
+        - **pie:** A pie chart is divided into segments, the arc of each segment shows the proportional value of each piece of data..
     ![alt text][pie]
-       
-     - **polarArea:** Polar area charts are similar to pie charts, but each segment has the same angle - the radius of the segment differs depending on the value..
-   
+    
+        - **polarArea:** Polar area charts are similar to pie charts, but each segment has the same angle - the radius of the segment differs depending on the value..
+
     ![alt text][polarArea]
-   
+    
 - **xLabel:** Define the text displayed on x-axis,
 - **yLabel:** Define the text displayed on y-axis (ex:Heat power(MW)),
 - **data:** Contains label and datasets
@@ -749,6 +748,7 @@ In this part it's describes how to create graphics that will be displayed of the
 
 ```
 
+
 ******************************************************************************************
 
 
@@ -777,7 +777,7 @@ run the api in a terminal
 cd cm
 python run.py
 ```
-
+    
 the documentation can be check at http://0.0.0.0:5001/apidocs/)
     
 **3. Test my CM :**
@@ -840,12 +840,12 @@ python run.py
 
 
 
-[polarArea]: https://i0.wp.com/belajarphp.net/wp-content/uploads/2016/10/chartsJs-pola-area-chart.png?w=810&ssl=1
-[pie]: https://i2.wp.com/belajarphp.net/wp-content/uploads/2016/10/chartjs-pie-dognut-charts.png?ssl=1
-[radar]: https://i2.wp.com/belajarphp.net/wp-content/uploads/2016/10/chartJs-radar-chart.png?ssl=1
-[line]: https://i1.wp.com/belajarphp.net/wp-content/uploads/2016/10/chartJS-line-chart.png?ssl=1
-[bar]: https://i0.wp.com/belajarphp.net/wp-content/uploads/2016/10/chartJS-bar-chart-1.png?w=946&ssl=1
-[logoinput]: https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Textbox2.gif/220px-Textbox2.gif
+[polarArea]: https://i0.wp.com/belajarphp.net/wp-content/uploads/2016/10/chartsJs-pola-area-chart.png?w=810&ssl=1 ""
+[pie]: https://i2.wp.com/belajarphp.net/wp-content/uploads/2016/10/chartjs-pie-dognut-charts.png?ssl=1 ""
+[radar]: https://i2.wp.com/belajarphp.net/wp-content/uploads/2016/10/chartJs-radar-chart.png?ssl=1 ""
+[line]: https://i1.wp.com/belajarphp.net/wp-content/uploads/2016/10/chartJS-line-chart.png?ssl=1 ""
+[bar]: https://i0.wp.com/belajarphp.net/wp-content/uploads/2016/10/chartJS-bar-chart-1.png?w=946&ssl=1 ""
+[logoinput]: https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Textbox2.gif/220px-Textbox2.gif ""
 
-[logoselect]: https://upload.wikimedia.org/wikipedia/commons/d/d1/Drop-down_list_example.PNG
-[logoradio]: https://upload.wikimedia.org/wikipedia/commons/c/cb/Radio_button.png
+[logoselect]: https://upload.wikimedia.org/wikipedia/commons/d/d1/Drop-down_list_example.PNG ""
+[logoradio]: https://upload.wikimedia.org/wikipedia/commons/c/cb/Radio_button.png ""

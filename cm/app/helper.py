@@ -1,11 +1,12 @@
 import uuid
 import ast
 import json
-
+import zipfile
 import os
 
-
+import shutil
 from zipfile import ZipFile
+from os import path
 
 import zipfile
 def generate_output_file_tif(output_directory):
@@ -31,7 +32,6 @@ def validateJSON(value):
 
     return response
 
-
 def create_zip_shapefiles(output_directory, shapefile):
     print ("shafefile",shapefile)
     os.chdir(output_directory)
@@ -54,7 +54,6 @@ def create_zip_shapefiles(output_directory, shapefile):
     finally:
         zf.close()
     return zip_file
-
 
 
 
