@@ -1,24 +1,7 @@
 FROM hotmaps/base_cm:latest
 
 
-# Setup app server
-WORKDIR /
-RUN mkdir -p /data
-
-# Install required python modules
-COPY ./requirements.txt /cm/
-RUN pip3 install -r /cm/requirements.txt
-
-# Copy app source code
-COPY . /cm
-WORKDIR /cm
-
-RUN chmod u+x /cm/wait-for-it.sh
-
-# Start server
-EXPOSE 80
-
-# Install Gurobi
+# Install Gurobi 
 ARG GUROBI_VERSION=8.1.0
 ARG GUROBI_VERSION_SHORT=810
 
@@ -38,7 +21,7 @@ RUN python3 setup.py install
 RUN rm -rf ${GUROBI_HOME}/docs                             && \
 	rm -rf ${GUROBI_HOME}/examples                         && \
 	rm -rf ${GUROBI_HOME}/src                              && \
-	rm /opt/gurobi${GUROBI_VERSION}_linux64.tar.gz
+	rm /opt/gurobi${GUROBI_VERSION}_linux64.tar.gz 
 
 # Copy Gurobi license
 COPY gurobi_install/gurobi.lic ${GUROBI_INSTALL}
@@ -46,10 +29,6 @@ COPY gurobi_install/gurobi.lic ${GUROBI_INSTALL}
 # Setup app server
 WORKDIR /
 RUN mkdir -p /data
-
-# Install pip
-RUN wget https://bootstrap.pypa.io/get-pip.py
-RUN python3 get-pip.py
 
 # Install required python modules
 COPY ./requirements.txt /cm/
@@ -59,8 +38,14 @@ RUN pip3 install -r /cm/requirements.txt
 COPY . /cm
 WORKDIR /cm
 
+RUN chmod u+x /cm/wait-for-it.sh
+
 # remove unnecessary files
 RUN rm /cm/gurobi_install/gurobi${GUROBI_VERSION}_linux64.tar.gz
+
+# Start server
+EXPOSE 80
+
 RUN mkdir -p /var/log/supervisor
 COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
