@@ -118,8 +118,20 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
               ]
 
         result["vector_layers"]=[
-             {"name": "Coherent areas (economic and non-economic)", "path": out_shp_label},
-              {"name": "Transmission lines","path": out_shp_edges}]
+             {"name": "Coherent areas (economic and non-economic)", "path": out_shp_label, "type": "custom",
+                  "symbology": [
+                          {"red":247, "green":252, "blue":185, "opacity":0.2, "value":"0", "label":"0:=Not Economic"},
+                          {"red": 44, "green":162, "blue": 95, "opacity":0.2, "value":"1", "label":"1:=Economic"}
+                          ]},
+             {"name": "Transmission lines","path": out_shp_edges}
+
+              #{"name": "Transmission lines","path": out_shp_edges, "type": "custom",
+                  #"symbology": [
+                          #{"red":247, "green":252, "blue":185, "opacity":1  , "value":"0", "label":"0:=Not Economic"},
+                          #{"red":239, "green": 59, "blue": 44, "opacity":0.2, "value":"1", "label":"1:=Economic"}
+                          #]
+                  #}
+              ]
 
         result["tabular"]=[{"name": "Summary of results","path": out_csv_solution}]
     result['indicator'] = output_summary

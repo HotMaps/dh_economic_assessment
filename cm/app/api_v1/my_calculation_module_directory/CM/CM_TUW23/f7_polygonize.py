@@ -16,7 +16,9 @@ def add_label_field(heat_dem_coh_last, heat_dem_spec_area, q, q_spec_cost,
                     economic_bool, area_coh_area, out_raster_coh_area_bool,
                     out_raster_labels, out_shp_prelabel, out_shp_label,
                     epsg=3035):
+    color_map = ["#f7fcb9", "#2ca25f"]
     label_list = []
+    
     outDriver = ogr.GetDriverByName("ESRI Shapefile")
     # Remove output shapefile if it already exists
     if os.path.exists(out_shp_label):
@@ -46,9 +48,10 @@ def add_label_field(heat_dem_coh_last, heat_dem_spec_area, q, q_spec_cost,
     outLayer = outDataSource.CreateLayer("newSHP", srs,
                                          geom_type=geom_typ_dict[geom_typ])
     Fields = ['label', 'economic', 'heat_dem_l', 'sp_h_d', 'pot_dh_dem',
-              'dist_cost', 'area[ha]']
+              'dist_cost', 'area[ha]', 'color', 'fillColor', 'opacity']
     Fields_dtype = [ogr.OFTInteger, ogr.OFTInteger, ogr.OFTReal, ogr.OFTReal,
-                    ogr.OFTReal, ogr.OFTReal, ogr.OFTReal]
+                    ogr.OFTReal, ogr.OFTReal, ogr.OFTReal, ogr.OFTString,
+                    ogr.OFTString, ogr.OFTString]
     for i, f in enumerate(Fields):
         Field = ogr.FieldDefn(f, Fields_dtype[i])
         outLayer.CreateField(Field)
@@ -83,6 +86,12 @@ def add_label_field(heat_dem_coh_last, heat_dem_spec_area, q, q_spec_cost,
                             q_spec_cost[geom_label])
         outFeature.SetField(outLayerDefn.GetFieldDefn(6).GetNameRef(),
                             area_coh_area[geom_label])
+        outFeature.SetField(outLayerDefn.GetFieldDefn(7).GetNameRef(),
+                            color_map[int(economic_bool[geom_label])])
+        outFeature.SetField(outLayerDefn.GetFieldDefn(8).GetNameRef(),
+                            color_map[int(economic_bool[geom_label])])
+        outFeature.SetField(outLayerDefn.GetFieldDefn(9).GetNameRef(),
+                            "0.5")
         outFeature.SetGeometry(geom)
         # Add new feature to output Layer
         outLayer.CreateFeature(outFeature)
