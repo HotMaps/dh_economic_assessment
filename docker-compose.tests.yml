@@ -2,7 +2,7 @@
 version: '3.2'
 
 services:
-  dh_economic_assessment:
+  base_calculation_module:
     build:
       context: ./cm
       dockerfile: Dockerfile
