@@ -21,4 +21,3 @@ scipy
 pandas
 networkx
 pyomo
-Cyton
