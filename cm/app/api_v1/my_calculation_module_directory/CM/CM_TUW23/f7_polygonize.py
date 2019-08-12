@@ -91,7 +91,7 @@ def add_label_field(heat_dem_coh_last, heat_dem_spec_area, q, q_spec_cost,
         outFeature.SetField(outLayerDefn.GetFieldDefn(8).GetNameRef(),
                             color_map[int(economic_bool[geom_label])])
         outFeature.SetField(outLayerDefn.GetFieldDefn(9).GetNameRef(),
-                            "0.5")
+                            "0.8")
         outFeature.SetGeometry(geom)
         # Add new feature to output Layer
         outLayer.CreateFeature(outFeature)
