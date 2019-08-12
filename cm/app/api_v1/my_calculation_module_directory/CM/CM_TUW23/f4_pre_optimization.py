@@ -71,6 +71,7 @@ def pre_opt(depreciation_time, interest_rate, grid_cost_ceiling,
     Author: Steffan Nielsen, Bernd Moeller
     '''
     annuity_factor = (interest_rate*(1+interest_rate)**depreciation_time)/((1+interest_rate)**depreciation_time-1)
+    '''
     tl_cost_copy = np.copy(trans_line_cap_cost)
     temp_q = np.copy(q)
     power_to_add = temp_q[temp_q/full_load_hours > 190]/full_load_hours
@@ -80,7 +81,7 @@ def pre_opt(depreciation_time, interest_rate, grid_cost_ceiling,
             tl_cost_copy = np.concatenate((tl_cost_copy, [[i * item, temp_price]]))
     tl_cost_copy = tl_cost_copy[tl_cost_copy[:, 0].argsort()]
     trans_line_cap_cost = np.copy(tl_cost_copy)
-
+    '''
     # consideration of annuity factor
     trans_line_cap_cost[:, 1] = trans_line_cap_cost[:, 1] * annuity_factor
     cost_matrix = trans_line_cap_cost[:, 1]

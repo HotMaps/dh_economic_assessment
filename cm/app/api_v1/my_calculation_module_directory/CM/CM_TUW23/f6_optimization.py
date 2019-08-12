@@ -30,6 +30,7 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
     transmision_line_cost (n x n) [EUR/m]: constant value for the cost of
                                    transmission line
     '''
+    max_cap = 1000 # range of x variables
     BigM = 10 ** 6
     if len(demand_coherent_area) == 0:
         term_cond = False
@@ -53,8 +54,6 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
     G = np.argmax(demand_coherent_area)
     G2 = np.argsort(demand_coherent_area)[-2]
     n = demand_coherent_area.shape[0]
-    nr_cost_steps = len(cost_matrix)
-    last_cost_step = nr_cost_steps - 1
 
     # cut to more distant areas
     # Keep only connections to the x closest Areas
@@ -198,18 +197,14 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
 
     m = en.ConcreteModel()
     solver = SolverFactory('gurobi', solver_io='python')
-    '''
-    solver = SolverFactory('gurobi', solver_io='python')
-    solver.options["MIPGap"] = 1e-4
-    solver.options["BarConvTol"] = 1e-8
-    '''
+    solver.options["MIPGap"] = 1e-2
+    solver.options["BarConvTol"] = 1e-4
 
     # ##########################################################################
     # ########## Sets:
     # ##########################################################################
     m.index_row = en.RangeSet(0, n-1)
     m.index_col = en.RangeSet(0, n-1)
-    m.index_cap = en.RangeSet(0, last_cost_step)
 
     # ##########################################################################
     # ########## Parameters:
@@ -227,39 +222,45 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
     m.dist_cost = en.Param(m.index_row, initialize=distribution_cost)
 
     def l_length(m, i, j):
-        return distance_matrix[i, j]
+        # in order to oblige line_cost in overall_cost_rule to zero
+        if demand_coherent_area[i]/full_load_hours < 0.2:
+            return 0
+        elif demand_coherent_area[j]/full_load_hours < 0.2:
+            return 0
+        else:
+            return distance_matrix[i, j]
     m.line_length = en.Param(m.index_row, m.index_col, initialize=l_length)
-
-    def trans_cost_steps(m, i):
-        return cost_matrix[i]
-    m.cost_steps = en.Param(m.index_cap, initialize=trans_cost_steps)
-
-    def trans_pow_step_ranges(m, i):
-        return pow_range_matrix[i]
-    m.pow_step_ranges = en.Param(m.index_cap, initialize=trans_pow_step_ranges)
 
     # ##########################################################################
     # ########## Variables:
     # ##########################################################################
     m.q_bool = en.Var(m.index_row, domain=en.Binary, initialize=1)
     m.l_bool = en.Var(m.index_row, m.index_col, domain=en.Binary, initialize=0)
-    m.cost_range_bool = en.Var(m.index_row, m.index_col, m.index_cap,
-                               domain=en.Binary, initialize=0)
     m.line_capacity = en.Var(m.index_row, m.index_col,
-                             domain=en.Reals, initialize=0)
-    m.line_cost = en.Var(m.index_row, m.index_col, domain=en.Reals,
+                             domain=en.NonNegativeReals, bounds=(0, max_cap),
+                             initialize=0)
+    m.line_cost = en.Var(m.index_row, m.index_col, domain=en.NonNegativeReals,
                          initialize=0)
     # set the largest demand zone to be part of the result
     m.q_bool[G].fix(1)
 
-    for i in m.index_row:
-        for j in m.index_col:
-            m.cost_range_bool[i, j, 0].fix(0)
 
     for i in range(fix_to_zero_index.shape[0]):
         s, t = fix_to_zero_index[i, :]
         m.l_bool[s, t].fix(0)
         m.line_capacity[s, t].fix(0)
+    
+
+    for i in range(len(demand_coherent_area)):
+        # Lowest transmission line capacity is 0.2 Mw. Intercept of the cost function
+        # in the piecewise linear expresion is 242.87. It should be set to zero if the
+        # capacity is less than 0.2 MW
+        if demand_coherent_area[i]/full_load_hours < 0.2:
+            for j in range(len(demand_coherent_area)):
+                m.l_bool[i, j].fix(0)
+                m.line_capacity[i, j].fix(0)
+                m.l_bool[j, i].fix(0)
+                m.line_capacity[j, i].fix(0)
 
     # ##########################################################################
     # ########## Constraints:
@@ -345,13 +346,61 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
     m.self_loop_capacity = en.Constraint(m.index_row,
                                          rule=self_loop_capacity_rule)
 
-    def spec_line_cost_rule(m, i, j):
-        return m.line_cost[i, j] == sum(m.cost_range_bool[i, j, k] *
-                                        (m.cost_steps[k] - m.cost_steps[k-1])
-                                        for k in m.index_cap if k > 0)
-    m.spec_line_cost = en.Constraint(m.index_row, m.index_col,
-                                     rule=spec_line_cost_rule)
 
+
+    
+    def f(m, i, j, x):
+        if x >= pow_range_matrix[0] and x < pow_range_matrix[1]:
+            return x * (cost_matrix[1] - cost_matrix[0])/(pow_range_matrix[1] - pow_range_matrix[0])
+        elif x >= pow_range_matrix[1] and x < pow_range_matrix[2]:
+            return (x - pow_range_matrix[1]) * (cost_matrix[2] - cost_matrix[1])/(pow_range_matrix[2] - pow_range_matrix[1]) + cost_matrix[1]
+        elif x >= pow_range_matrix[2] and x < pow_range_matrix[3]:
+            return (x - pow_range_matrix[2]) * (cost_matrix[3] - cost_matrix[2])/(pow_range_matrix[3] - pow_range_matrix[2]) + cost_matrix[2]
+        elif x >= pow_range_matrix[3] and x < pow_range_matrix[4]:
+            return (x - pow_range_matrix[3]) * (cost_matrix[4] - cost_matrix[3])/(pow_range_matrix[4] - pow_range_matrix[3]) + cost_matrix[3]
+        elif x >= pow_range_matrix[4] and x < pow_range_matrix[5]:
+            return (x - pow_range_matrix[4]) * (cost_matrix[5] - cost_matrix[4])/(pow_range_matrix[5] - pow_range_matrix[4]) + cost_matrix[4]
+        elif x >= pow_range_matrix[5] and x < pow_range_matrix[6]:
+            return (x - pow_range_matrix[5]) * (cost_matrix[6] - cost_matrix[5])/(pow_range_matrix[6] - pow_range_matrix[5]) + cost_matrix[5]
+        elif x >= pow_range_matrix[6] and x < pow_range_matrix[7]:
+            return (x - pow_range_matrix[6]) * (cost_matrix[7] - cost_matrix[6])/(pow_range_matrix[7] - pow_range_matrix[6]) + cost_matrix[6]
+        elif x >= pow_range_matrix[7] and x < pow_range_matrix[8]:
+            return (x - pow_range_matrix[7]) * (cost_matrix[8] - cost_matrix[7])/(pow_range_matrix[8] - pow_range_matrix[7]) + cost_matrix[7]
+        elif x >= pow_range_matrix[8] and x < pow_range_matrix[9]:
+            return (x - pow_range_matrix[8]) * (cost_matrix[9] - cost_matrix[8])/(pow_range_matrix[9] - pow_range_matrix[8]) + cost_matrix[8]
+        elif x >= pow_range_matrix[9] and x < pow_range_matrix[10]:
+            return (x - pow_range_matrix[9]) * (cost_matrix[10] - cost_matrix[9])/(pow_range_matrix[10] - pow_range_matrix[9]) + cost_matrix[9]
+        elif x >= pow_range_matrix[10] and x < pow_range_matrix[11]:
+            return (x - pow_range_matrix[10]) * (cost_matrix[11] - cost_matrix[10])/(pow_range_matrix[11] - pow_range_matrix[10]) + cost_matrix[10]
+        elif x >= pow_range_matrix[11] and x < pow_range_matrix[12]:
+            return (x - pow_range_matrix[11]) * (cost_matrix[12] - cost_matrix[11])/(pow_range_matrix[12] - pow_range_matrix[11]) + cost_matrix[11]
+        elif x >= pow_range_matrix[12] and x < pow_range_matrix[13]:
+            return (x - pow_range_matrix[12]) * (cost_matrix[13] - cost_matrix[12])/(pow_range_matrix[13] - pow_range_matrix[12]) + cost_matrix[12]
+        elif x >= pow_range_matrix[13] and x < pow_range_matrix[14]:
+            return (x - pow_range_matrix[13]) * (cost_matrix[14] - cost_matrix[13])/(pow_range_matrix[14] - pow_range_matrix[13]) + cost_matrix[13]
+        elif x >= pow_range_matrix[14] and x < pow_range_matrix[15]:
+            return (x - pow_range_matrix[14]) * (cost_matrix[15] - cost_matrix[14])/(pow_range_matrix[15] - pow_range_matrix[14]) + cost_matrix[14]
+        else: 
+            return (x - pow_range_matrix[15]) * (cost_matrix[16] - cost_matrix[15])/(pow_range_matrix[16] - pow_range_matrix[15]) + cost_matrix[15]
+    
+    m.pw_con = en.Piecewise(m.index_row, m.index_col, m.line_cost, m.line_capacity,
+                                pw_pts=list(pow_range_matrix), pw_constr_type='EQ', f_rule=f)
+    
+    
+    
+    
+    '''
+    # #################################################################
+    #bpts = list(np.linspace(0, 20, 201)) + list(np.linspace(21, max_cap + 2, 1482))
+    bpts = list(pow_range_matrix) + [pow_range_matrix[-1:][0] + 2]
+    def cost_func(m, i, j, xp):
+        # we not need j, but it is passed as the index for the constraint
+        return 3.83338211e-06*xp**3 - 6.60615285e-03*xp**2 + 5.22996971*xp + 2.42878414e+02
+
+    m.specific_cost = en.Piecewise(m.index_row, m.index_col, m.line_cost, m.line_capacity, pw_pts=bpts, pw_constr_type='EQ', f_rule=cost_func)
+
+    # #################################################################
+    
     def cost_range_limit_rule(m, i, j, k):
         return m.cost_range_bool[i, j, k] <= m.l_bool[i, j]
     m.cost_range_limit = en.Constraint(m.index_row, m.index_col, m.index_cap,
@@ -379,7 +428,7 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
                         for k in m.index_cap if k > 0) - m.line_capacity[i, j]
     m.cost_range_limit_4 = en.Constraint(m.index_row, m.index_col,
                                          rule=cost_range_limit_4_rule)
-
+    '''
     m.ccConstraints = en.ConstraintList()
 
     def obj_rule_1(m):

@@ -34,10 +34,20 @@ def main(investment_start_year, investment_last_year, depreciation_time,
     grid_factor = 1.05
     pixT = 10*np.arange(1, 135, 0.1)
     DH_threshold = 1
+    trans_line_cap_cost = np.array([[0 , 0], [0.2 , 195], [0.3 , 206],
+                                    [0.6 , 220], [1.2 , 240],
+                                    [1.9 , 261], [3.6 , 288],
+                                    [6.1 , 323], [9.8 , 357],
+                                    [20 , 426], [45 , 564],
+                                    [75 , 701], [125 , 839],
+                                    [190 , 976], [400 , 1418],
+                                    [700 , 2050], [1000 , 2683]])
+    '''
     trans_line_cap_cost = np.array([[0, 0], [0.2, 195], [0.3, 206], [0.6, 220], [1.2, 240],
                         [1.9, 261], [3.6, 288], [6.1, 323], [9.8, 357],
                         [20,  426], [45,  564], [75,  701], [125, 839],
                         [190, 976], [19000, 97600]])
+    '''
     dist_grid_cost = float(grid_cost_ceiling)/float(grid_factor)
     
     # f2: calculate pixel based values
