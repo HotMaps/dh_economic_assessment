@@ -16,7 +16,7 @@ def main(investment_start_year, investment_last_year, depreciation_time,
          out_raster_coh_area_bool, out_raster_labels, out_shp_prelabel,
          out_shp_label,out_shp_edges, out_shp_nodes, out_csv_solution,
          output_directory):
-    output_summary = f0.main(investment_start_year, investment_last_year,
+    output_summary, opt_term_cond, edge_list = f0.main(investment_start_year, investment_last_year,
                              depreciation_time, accumulated_energy_saving,
                              dh_connection_rate_first_year,
                              dh_connection_rate_last_year, interest_rate,
@@ -29,4 +29,4 @@ def main(investment_start_year, investment_last_year, depreciation_time,
                              out_raster_labels, out_shp_prelabel,
                              out_shp_label, out_shp_edges, out_shp_nodes,
                              out_csv_solution, output_directory)
-    return output_summary
+    return output_summary, opt_term_cond, edge_list

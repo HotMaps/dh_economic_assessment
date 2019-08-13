@@ -11,7 +11,7 @@ def summary(covered_demand, dist_inv, dist_spec_cost, trans_inv,
             heat_dem_last, n_coh_areas, n_coh_areas_selected, term_cond, numLabels):
     if numLabels < 1:
         summary = [{"unit": "-", "name": "No coherent area for given input parameters found!", "value": 0.0}]
-    elif numLabels > 100:
+    elif numLabels > 70:
         summary = [{"unit": "-", "name": "Too many coherent areas. consider to change input parameters!", "value": 0.0}]
     else:
         if not term_cond:
