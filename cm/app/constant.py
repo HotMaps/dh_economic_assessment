@@ -152,7 +152,7 @@ INPUTS_CALCULATION_MODULE = [
 
 SIGNATURE = {
     "category": "Buildings",
-    "authorized_scale":["NUTS 3","LAU 2","Hectare"],
+    "authorized_scale":["LAU 2","Hectare"],
     "cm_name": CM_NAME,
     "description_link": "https://github.com/HotMaps/hotmaps_wiki/wiki/CM-District-heating-potential-economic-assessment",
     "layers_needed": [

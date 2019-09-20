@@ -137,5 +137,4 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
 
         result["tabular"]=[{"name": "Summary of results","path": out_csv_solution}]
     result['indicator'] = output_summary
-
     return result
