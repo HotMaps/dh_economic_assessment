@@ -48,7 +48,7 @@ def add_label_field(heat_dem_coh_last, heat_dem_spec_area, q, q_spec_cost,
     outLayer = outDataSource.CreateLayer("newSHP", srs,
                                          geom_type=geom_typ_dict[geom_typ])
     Fields = ['Label', 'Economic', 'Dem_last', 'Spec_Dem', 'Potent_DH',
-              'Distr_Cost', 'Area[ha]', 'color', 'fillColor', 'opacity']
+              'Distr_Cost', 'Area', 'color', 'fillColor', 'opacity']
     Fields_dtype = [ogr.OFTInteger, ogr.OFTString, ogr.OFTString, ogr.OFTString,
                     ogr.OFTString, ogr.OFTString, ogr.OFTString, ogr.OFTString,
                     ogr.OFTString, ogr.OFTString]
