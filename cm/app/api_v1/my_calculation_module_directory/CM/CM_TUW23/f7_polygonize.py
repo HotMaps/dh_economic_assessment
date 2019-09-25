@@ -77,12 +77,14 @@ def add_label_field(heat_dem_coh_last, heat_dem_spec_area, q, q_spec_cost,
                             geom_label+1)
         outFeature.SetField(outLayerDefn.GetFieldDefn(1).GetNameRef(),
                             econ_bool_dict[int(economic_bool[geom_label])])
+        # demand in GWh
         outFeature.SetField(outLayerDefn.GetFieldDefn(2).GetNameRef(),
-                            round(heat_dem_coh_last[geom_label], 2))
+                            round(heat_dem_coh_last[geom_label]/1000, 2))
         outFeature.SetField(outLayerDefn.GetFieldDefn(3).GetNameRef(),
                             round(heat_dem_spec_area[geom_label], 2))
+        # potential in GWh
         outFeature.SetField(outLayerDefn.GetFieldDefn(4).GetNameRef(),
-                            round(q[geom_label], 2))
+                            round(q[geom_label]/1000, 2))
         outFeature.SetField(outLayerDefn.GetFieldDefn(5).GetNameRef(),
                             round(q_spec_cost[geom_label], 2))
         outFeature.SetField(outLayerDefn.GetFieldDefn(6).GetNameRef(),
