@@ -47,9 +47,9 @@ def add_label_field(heat_dem_coh_last, heat_dem_spec_area, q, q_spec_cost,
     outDataSource = outDriver.CreateDataSource(out_shp_label)
     outLayer = outDataSource.CreateLayer("newSHP", srs,
                                          geom_type=geom_typ_dict[geom_typ])
-    Fields = ['label', 'economic', 'heat_dem_l', 'sp_h_d', 'pot_dh_dem',
-              'dist_cost', 'area[ha]', 'color', 'fillColor', 'opacity']
-    Fields_dtype = [ogr.OFTInteger, ogr.OFTInteger, ogr.OFTReal, ogr.OFTReal,
+    Fields = ['Label', 'Economic', 'Dem_last', 'Spec_Dem.', 'Potent_DH',
+              'Distr_Cost', 'Area[ha]', 'color', 'fillColor', 'opacity']
+    Fields_dtype = [ogr.OFTInteger, ogr.OFTString, ogr.OFTReal, ogr.OFTReal,
                     ogr.OFTReal, ogr.OFTReal, ogr.OFTReal, ogr.OFTString,
                     ogr.OFTString, ogr.OFTString]
     for i, f in enumerate(Fields):
@@ -57,6 +57,7 @@ def add_label_field(heat_dem_coh_last, heat_dem_spec_area, q, q_spec_cost,
         outLayer.CreateField(Field)
     # Get the output Layer's Feature Definition
     outLayerDefn = outLayer.GetLayerDefn()
+    econ_bool_dict = {0: " No", 1: " Yes"}
     for feature in inLayer:
         geom = feature.GetGeometryRef()
         centroid = geom.Centroid()
@@ -75,15 +76,15 @@ def add_label_field(heat_dem_coh_last, heat_dem_spec_area, q, q_spec_cost,
         outFeature.SetField(outLayerDefn.GetFieldDefn(0).GetNameRef(),
                             geom_label+1)
         outFeature.SetField(outLayerDefn.GetFieldDefn(1).GetNameRef(),
-                            economic_bool[geom_label])
+                            econ_bool_dict[int(economic_bool[geom_label])])
         outFeature.SetField(outLayerDefn.GetFieldDefn(2).GetNameRef(),
-                            heat_dem_coh_last[geom_label])
+                            round(heat_dem_coh_last[geom_label], 2))
         outFeature.SetField(outLayerDefn.GetFieldDefn(3).GetNameRef(),
-                            heat_dem_spec_area[geom_label])
+                            round(heat_dem_spec_area[geom_label], 2))
         outFeature.SetField(outLayerDefn.GetFieldDefn(4).GetNameRef(),
-                            q[geom_label])
+                            round(q[geom_label], 2))
         outFeature.SetField(outLayerDefn.GetFieldDefn(5).GetNameRef(),
-                            q_spec_cost[geom_label])
+                            round(q_spec_cost[geom_label], 2))
         outFeature.SetField(outLayerDefn.GetFieldDefn(6).GetNameRef(),
                             area_coh_area[geom_label])
         outFeature.SetField(outLayerDefn.GetFieldDefn(7).GetNameRef(),
@@ -91,7 +92,7 @@ def add_label_field(heat_dem_coh_last, heat_dem_spec_area, q, q_spec_cost,
         outFeature.SetField(outLayerDefn.GetFieldDefn(8).GetNameRef(),
                             color_map[int(economic_bool[geom_label])])
         outFeature.SetField(outLayerDefn.GetFieldDefn(9).GetNameRef(),
-                            "0.8")
+                            "0.6")
         outFeature.SetGeometry(geom)
         # Add new feature to output Layer
         outLayer.CreateFeature(outFeature)
