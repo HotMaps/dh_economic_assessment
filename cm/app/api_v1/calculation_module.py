@@ -120,20 +120,20 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
             result["vector_layers"]=[
                  {"name": "Coherent areas (economic and non-economic)", "path": out_shp_label, "type": "custom",
                       "symbology": [
-                              {"red":247, "green":252, "blue":185, "opacity":0.6, "value":"0", "label":"Not Economic"},
-                              {"red": 44, "green":162, "blue": 95, "opacity":0.6, "value":"1", "label":"Economic"}
+                              {"red":247, "green":252, "blue":185, "opacity":0.7, "value":" No", "label":"Not Economic"},
+                              {"red": 44, "green":162, "blue": 95, "opacity":0.7, "value":" Yes", "label":"Economic"}
                               ]},
                  {"name": "Transmission lines","path": out_shp_edges, "type": "custom",
                       "symbology": [
-                              {"red":239, "green":59, "blue":44, "opacity":0.6, "value":"0", "label":"Weight in MW"}
+                              {"red":239, "green":59, "blue":44, "opacity":0.7, "value":"1", "label":"Weight in MW"}
                               ]},
                   ]
         else:
             result["vector_layers"]=[
                  {"name": "Coherent areas (economic and non-economic)", "path": out_shp_label, "type": "custom",
                       "symbology": [
-                              {"red":247, "green":252, "blue":185, "opacity":0.6, "value":"0", "label":"Not Economic"},
-                              {"red": 44, "green":162, "blue": 95, "opacity":0.6, "value":"1", "label":"Economic"}
+                              {"red":247, "green":252, "blue":185, "opacity":0.7, "value":" No", "label":"Not Economic"},
+                              {"red": 44, "green":162, "blue": 95, "opacity":0.7, "value":" Yes", "label":"Economic"}
                               ]}]
 
         result["tabular"]=[{"name": "Summary of results","path": out_csv_solution}]
