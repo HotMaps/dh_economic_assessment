@@ -198,7 +198,7 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
     m = en.ConcreteModel()
     solver = SolverFactory('gurobi', solver_io='python')
     # the gap between the lower and upper objective bound
-    solver.options["MIPGap"] = 1e-3
+    solver.options["MIPGap"] = 1e-2
     # the relative difference between the primal and dual objective value
     solver.options["BarConvTol"] = 1e-4
     # set to 1 if you are interested in feasible solutions
