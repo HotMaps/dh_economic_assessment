@@ -120,7 +120,7 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
             result["vector_layers"]=[
                  {"name": "Coherent areas (economic and non-economic)", "path": out_shp_label_zip, "type": "custom",
                       "symbology": [
-                              {"red":247, "green":252, "blue":185, "opacity":0.7, "value":" No", "label":"Not Economic"},
+                              {"red":222, "green":45, "blue":38, "opacity":0.7, "value":" No", "label":"Not Economic"},
                               {"red": 44, "green":162, "blue": 95, "opacity":0.7, "value":" Yes", "label":"Economic"}
                               ]},
                  {"name": "Transmission lines","path": out_shp_edges_zip, "type": "custom",
@@ -132,7 +132,7 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
             result["vector_layers"]=[
                  {"name": "Coherent areas (economic and non-economic)", "path": out_shp_label_zip, "type": "custom",
                       "symbology": [
-                              {"red":247, "green":252, "blue":185, "opacity":0.7, "value":" No", "label":"Not Economic"},
+                              {"red":222, "green":45, "blue":38, "opacity":0.7, "value":" No", "label":"Not Economic"},
                               {"red": 44, "green":162, "blue": 95, "opacity":0.7, "value":" Yes", "label":"Economic"}
                               ]}]
 

@@ -16,7 +16,7 @@ def add_label_field(heat_dem_coh_last, heat_dem_spec_area, q, q_spec_cost,
                     economic_bool, area_coh_area, out_raster_coh_area_bool,
                     out_raster_labels, out_shp_prelabel, out_shp_label,
                     epsg=3035):
-    color_map = ["#f7fcb9", "#2ca25f"]
+    color_map = ["#de2d26", "#2ca25f"]
     label_list = []
     
     outDriver = ogr.GetDriverByName("ESRI Shapefile")
