@@ -73,7 +73,8 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
     out_shp_prelabel = generate_output_file_shp(output_directory)
     out_shp_label = generate_output_file_shp(output_directory)
     out_shp_edges = generate_output_file_shp(output_directory)
-    out_shp_nodes = generate_output_file_shp(output_directory)
+    #out_shp_nodes = generate_output_file_shp(output_directory)
+    out_shp_nodes = ""
     
     # output csv files
     out_csv_solution = generate_output_file_csv(output_directory)
@@ -109,18 +110,18 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
     result = dict()
 
     if opt_term_cond:
-        out_shp_label = create_zip_shapefiles(output_directory, out_shp_label)
+        #out_shp_label = create_zip_shapefiles(output_directory, out_shp_label)
         result['name'] = CM_NAME
         result["raster_layers"]=[
               {"name": "heat demand density in the last year of the investment","path": out_raster_hdm_last_year, "type": "heat"}
               ]
         if len(edge_list) > 0:
-            out_shp_edges = create_zip_shapefiles(output_directory, out_shp_edges)
+            #out_shp_edges = create_zip_shapefiles(output_directory, out_shp_edges)
             result["vector_layers"]=[
                  {"name": "Coherent areas (economic and non-economic)", "path": out_shp_label, "type": "custom",
                       "symbology": [
-                              {"red":247, "green":252, "blue":185, "opacity":0.6, "value":"0", "label":"0:=Not Economic"},
-                              {"red": 44, "green":162, "blue": 95, "opacity":0.6, "value":"1", "label":"1:=Economic"}
+                              {"red":247, "green":252, "blue":185, "opacity":0.6, "value":"0", "label":"Not Economic"},
+                              {"red": 44, "green":162, "blue": 95, "opacity":0.6, "value":"1", "label":"Economic"}
                               ]},
                  {"name": "Transmission lines","path": out_shp_edges, "type": "custom",
                       "symbology": [
@@ -131,8 +132,8 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
             result["vector_layers"]=[
                  {"name": "Coherent areas (economic and non-economic)", "path": out_shp_label, "type": "custom",
                       "symbology": [
-                              {"red":247, "green":252, "blue":185, "opacity":0.6, "value":"0", "label":"0:=Not Economic"},
-                              {"red": 44, "green":162, "blue": 95, "opacity":0.6, "value":"1", "label":"1:=Economic"}
+                              {"red":247, "green":252, "blue":185, "opacity":0.6, "value":"0", "label":"Not Economic"},
+                              {"red": 44, "green":162, "blue": 95, "opacity":0.6, "value":"1", "label":"Economic"}
                               ]}]
 
         result["tabular"]=[{"name": "Summary of results","path": out_csv_solution}]

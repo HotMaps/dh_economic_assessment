@@ -39,15 +39,16 @@ def edge_representation(row_from_label, col_from_label, row_to_label,
     gdf = gpd.read_file(outDir + '/edges.shp')
     gdf['color'] = np.array(["#ef3b2c"]*edge_list.shape[0])
     gdf['fillColor'] = np.array(["#ef3b2c"]*edge_list.shape[0])
-    gdf['opacity'] = np.array(["0.8"]*edge_list.shape[0])
+    gdf['opacity'] = np.array(["0.6"]*edge_list.shape[0])
     gdf.to_file(out_shp_edges)
     gdf = None
+    '''
     for filename in os.listdir(outDir):
         if filename.startswith("edges"):
             os.remove(outDir + os.sep + filename)
         if filename.startswith("nodes"):
             os.remove(outDir + os.sep + filename)
-    '''
+    
     for filename in os.listdir(outDir):
         if filename.startswith("edges"):
             os.rename(outDir + os.sep + filename, outDir + os.sep + os.path.splitext(os.path.basename(out_shp_edges))[0] + os.path.splitext(filename)[1])

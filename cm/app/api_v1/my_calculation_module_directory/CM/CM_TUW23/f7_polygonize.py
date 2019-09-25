@@ -47,10 +47,10 @@ def add_label_field(heat_dem_coh_last, heat_dem_spec_area, q, q_spec_cost,
     outDataSource = outDriver.CreateDataSource(out_shp_label)
     outLayer = outDataSource.CreateLayer("newSHP", srs,
                                          geom_type=geom_typ_dict[geom_typ])
-    Fields = ['Label', 'Economic', 'Dem_last', 'Spec_Dem.', 'Potent_DH',
+    Fields = ['Label', 'Economic', 'Dem_last', 'Spec_Dem', 'Potent_DH',
               'Distr_Cost', 'Area[ha]', 'color', 'fillColor', 'opacity']
-    Fields_dtype = [ogr.OFTInteger, ogr.OFTString, ogr.OFTReal, ogr.OFTReal,
-                    ogr.OFTReal, ogr.OFTReal, ogr.OFTReal, ogr.OFTString,
+    Fields_dtype = [ogr.OFTInteger, ogr.OFTString, ogr.OFTString, ogr.OFTString,
+                    ogr.OFTString, ogr.OFTString, ogr.OFTString, ogr.OFTString,
                     ogr.OFTString, ogr.OFTString]
     for i, f in enumerate(Fields):
         Field = ogr.FieldDefn(f, Fields_dtype[i])
@@ -79,16 +79,16 @@ def add_label_field(heat_dem_coh_last, heat_dem_spec_area, q, q_spec_cost,
                             econ_bool_dict[int(economic_bool[geom_label])])
         # demand in GWh
         outFeature.SetField(outLayerDefn.GetFieldDefn(2).GetNameRef(),
-                            round(heat_dem_coh_last[geom_label]/1000, 2))
+                            str(round(heat_dem_coh_last[geom_label]/1000, 2)) + " GWh")
         outFeature.SetField(outLayerDefn.GetFieldDefn(3).GetNameRef(),
-                            round(heat_dem_spec_area[geom_label], 2))
+                            str(round(heat_dem_spec_area[geom_label], 2)) + " MWh/ha")
         # potential in GWh
         outFeature.SetField(outLayerDefn.GetFieldDefn(4).GetNameRef(),
-                            round(q[geom_label]/1000, 2))
+                            str(round(q[geom_label]/1000, 2)) + " GWh")
         outFeature.SetField(outLayerDefn.GetFieldDefn(5).GetNameRef(),
-                            round(q_spec_cost[geom_label], 2))
+                            str(round(q_spec_cost[geom_label], 2)) + " EUR/MWh")
         outFeature.SetField(outLayerDefn.GetFieldDefn(6).GetNameRef(),
-                            area_coh_area[geom_label])
+                            str(area_coh_area[geom_label]) + " hectare")
         outFeature.SetField(outLayerDefn.GetFieldDefn(7).GetNameRef(),
                             color_map[int(economic_bool[geom_label])])
         outFeature.SetField(outLayerDefn.GetFieldDefn(8).GetNameRef(),
