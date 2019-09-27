@@ -63,7 +63,7 @@ def main(investment_start_year, investment_last_year, depreciation_time,
                         out_raster_invest_Euro, out_raster_coh_area_bool,
                         out_raster_labels)
     edge_list = []
-    if numLabels > 0 and numLabels < 40:
+    if numLabels > 0 and numLabels < 70:
         # numLabels = 0 : the grid cost ceiling is too low.
         # numLabels > 100: too many coherent areas were detected!
         # f4: pre-steps for providing input to the optimization function including

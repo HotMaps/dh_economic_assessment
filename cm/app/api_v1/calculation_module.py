@@ -50,12 +50,10 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
     dh_connection_rate_last_year = float(inputs_parameter_selection["dh_connection_rate_last_year"])
     interest_rate = float(inputs_parameter_selection["interest_rate"])
     grid_cost_ceiling = float(inputs_parameter_selection["grid_cost_ceiling"])
-    c1 = [inputs_parameter_selection["c1_innercity"], inputs_parameter_selection["c1_outercity"], inputs_parameter_selection["c1_park"]]
-    c2 = [inputs_parameter_selection["c2_innercity"], inputs_parameter_selection["c2_outercity"], inputs_parameter_selection["c2_park"]]
+    c1 = float(inputs_parameter_selection["c1"])
+    c2 = float(inputs_parameter_selection["c2"])
     full_load_hours = int(inputs_parameter_selection["full_load_hours"])
-    for i in range(3):
-        c1[i] = float(c1[i])
-        c2[i] = float(c2[i])
+
     
     # input raster layers: (gfa:= gross floor area; hdm:= heat density map)
     in_raster_gfa = inputs_raster_selection["gross_floor_area"]

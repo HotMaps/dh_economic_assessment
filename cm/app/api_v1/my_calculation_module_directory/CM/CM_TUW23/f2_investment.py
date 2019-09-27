@@ -15,7 +15,8 @@ def annuity(r, period):
     r = float(r)
     return ((1+r)**period - 1) / (r*(1+r)**period)
 
-
+'''
+# old function
 def cost_factors(c1, c2, PR):
     PR_park = (PR < 0.3).astype(int)
     PR_outercity = (PR >= 0.3).astype(int) * (PR < 0.5).astype(int)
@@ -27,7 +28,7 @@ def cost_factors(c1, c2, PR):
     cf2 = float(c2[0]) * PR_park + float(c2[1]) * PR_outercity + float(c2[2]) * PR_innercity
     del PR_park, PR_outercity, PR_innercity
     return cf1, cf2
-
+'''
 
 def dh_demand(c1, c2, raster_plotratio, raster_hdm, start_year, last_year,
               accumulated_energy_saving, dh_connection_rate_1st_year,
@@ -73,7 +74,9 @@ def dh_demand(c1, c2, raster_plotratio, raster_hdm, start_year, last_year,
     # the unit for L is m however in each m2
     # L is in m: to get the value for each pixel (ha) you should multiply it
     # by 10000 because 1 pixel has 10000 m2
-    L = 1/(61.8 * PR_sparse**(-0.15))
+    # The following formulation of L comes from Persson et al. 2019 paper with
+    # the title "Heat Roadmap Europe: Heat distribution costs"
+    L = 1 / ((PR_sparse <= 0.4).astype(int) * (137.5*PR_sparse + 5) + (PR_sparse > 0.4).astype(int) * 60)
     # initialize the variables
     q = 0
     # q_new = dh_connection_rate_1st_year * sparseDemand
@@ -98,11 +101,14 @@ def dh_demand(c1, c2, raster_plotratio, raster_hdm, start_year, last_year,
     filtered_LHD = (np.log(linearHeatDensity) < LHD_THRESHOLD).astype(int)
     elements = np.nonzero(filtered_LHD)[0]
     dA = dA_slope * (np.log(linearHeatDensity)) + dA_slope
-    cf1, cf2 = cost_factors(c1, c2, PR_sparse)
     dA[elements] = 0
     q_max[elements] = 0
     denominator = q / L
+    """ # old code
+    cf1, cf2 = cost_factors(c1, c2, PR_sparse)
     divisor = cf1[1] + cf2[1]*dA
+    """
+    divisor = c1 + c2*dA
     divisor[elements] = 0
     investment = divisor/denominator
     finalInvestment = np.zeros_like(hdm, dtype=dataType)
