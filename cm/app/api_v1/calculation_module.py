@@ -136,10 +136,8 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
                               ]}]
 
         result["tabular"]=[{"name": "Summary of results","path": out_csv_solution}]
-    result['indicator'] = output_summary
     horizon = investment_last_year - investment_start_year + 1
     if horizon > depreciation_time:
-        result['indicator']['Warning'] = "Study horizon is longer than " \
-                            "depreciation time. The calculation was done " \
-                            "only till the end of depr_period!"
+        output_summary = output_summary + [{"unit": "-", "name": "Warning: Study horizon is longer than depreciation time. The calculation was done only till the end of depr_period!", "value": 0.0}]
+    result['indicator'] = output_summary
     return result
