@@ -6,11 +6,10 @@ Created on July 11 2017
 """
 import os
 import sys
-import time
 import numpy as np
 from scipy.ndimage import binary_dilation
 from scipy.ndimage import binary_erosion
-from scipy.ndimage import binary_fill_holes
+#from scipy.ndimage import binary_fill_holes
 from scipy.ndimage import measurements
 path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.
                                                        abspath(__file__))))
@@ -124,8 +123,6 @@ def DHReg(heat_density_map, pix_threshold, DH_threshold, in_orig=None):
     # Factor 1000 for conversion from GWh/a to MWh/a
     DH_threshold = DH_threshold * 1000
     if isinstance(heat_density_map, np.ndarray):
-        if not in_orig:
-            raise TypeError('The raster origin is of None type!')
         gt = in_orig
         hdm_arr = heat_density_map
     elif isinstance(heat_density_map, str):
@@ -134,21 +131,3 @@ def DHReg(heat_density_map, pix_threshold, DH_threshold, in_orig=None):
     DH_Selected_Region = DHRegions(hdm_arr_filtered, DH_threshold)
     # return DH_Selected_Region and raster geotransform array
     return DH_Selected_Region, gt
-
-
-if __name__ == "__main__":
-    start = time.time()
-    data_warehouse = path + os.sep + 'AD/data_warehouse'
-    heat_density_map = data_warehouse + os.sep + 'heat_tot_curr_density_AT.tif'
-    region = data_warehouse + os.sep + 'AT.shp'
-    output_dir = path + os.sep + 'Outputs'
-    if not os.path.exists(output_dir):
-        os.mkdir(output_dir)
-    outRasterPath = output_dir + os.sep + 'Pot_AT_TH30.tif'
-    # pix_threshold [GWh/km2]
-    pix_threshold = 10
-    # DH_threshold [GWh/a]
-    DH_threshold = 30
-    output = DHReg(heat_density_map, region, pix_threshold, DH_threshold)
-    elapsed = time.time() - start
-    print("%0.3f seconds" % elapsed)

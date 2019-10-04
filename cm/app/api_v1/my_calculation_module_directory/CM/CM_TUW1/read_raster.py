@@ -11,4 +11,3 @@ def raster_array(raster, dType=float, return_gt=None):
         return arr, geo_transform
     else:
         return arr
-

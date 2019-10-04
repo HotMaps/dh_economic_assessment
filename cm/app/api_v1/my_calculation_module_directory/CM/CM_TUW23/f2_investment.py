@@ -15,20 +15,6 @@ def annuity(r, period):
     r = float(r)
     return ((1+r)**period - 1) / (r*(1+r)**period)
 
-'''
-# old function
-def cost_factors(c1, c2, PR):
-    PR_park = (PR < 0.3).astype(int)
-    PR_outercity = (PR >= 0.3).astype(int) * (PR < 0.5).astype(int)
-    PR_innercity = (PR >= 0.5).astype(int)
-    PR_park = np.asarray(PR_park)
-    PR_outercity = np.asarray(PR_outercity)
-    PR_innercity = np.asarray(PR_innercity)
-    cf1 = float(c1[0]) * PR_park + float(c1[1]) * PR_outercity + float(c1[2]) * PR_innercity
-    cf2 = float(c2[0]) * PR_park + float(c2[1]) * PR_outercity + float(c2[2]) * PR_innercity
-    del PR_park, PR_outercity, PR_innercity
-    return cf1, cf2
-'''
 
 def dh_demand(c1, c2, raster_plotratio, raster_hdm, start_year, last_year,
               accumulated_energy_saving, dh_connection_rate_1st_year,
@@ -48,9 +34,6 @@ def dh_demand(c1, c2, raster_plotratio, raster_hdm, start_year, last_year,
     horizon = int(last_year) - int(start_year) + 1
     horizon = int(horizon)
     if horizon > int(depr_period):
-        raise Warning('Study horizon is longer than depr_period of district. '
-                      'The calculation will be done only till the end of '
-                      'depr_period!')
         horizon = depr_period
         remaining_years = 0
     else:
