@@ -37,10 +37,12 @@ def edge_representation(row_from_label, col_from_label, row_to_label,
             file.write(spatialRef.ExportToWkt())
     G = None
     gdf = gpd.read_file(outDir + '/edges.shp')
+    '''
     gdf['line'] = np.array([1]*edge_list.shape[0])
     gdf['color'] = np.array(["#ef3b2c"]*edge_list.shape[0])
     gdf['fillColor'] = np.array(["#ef3b2c"]*edge_list.shape[0])
     gdf['opacity'] = np.array(["0.7"]*edge_list.shape[0])
+    '''
     gdf.to_file(out_shp_edges)
     gdf = None
 
