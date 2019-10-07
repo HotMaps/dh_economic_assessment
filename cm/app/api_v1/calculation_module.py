@@ -71,9 +71,8 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
     out_shp_prelabel = generate_output_file_shp(output_directory)
     out_shp_label = generate_output_file_shp(output_directory)
     out_shp_edges = generate_output_file_shp(output_directory)
-    #out_shp_nodes = generate_output_file_shp(output_directory)
-    out_shp_nodes = ""
-    
+    out_shp_nodes = generate_output_file_shp(output_directory)
+
     # output csv files
     out_csv_solution = generate_output_file_csv(output_directory)
 
