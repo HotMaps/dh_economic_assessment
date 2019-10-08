@@ -5,6 +5,7 @@ path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.
                                                        abspath(__file__))))
 if path not in sys.path:
     sys.path.append(path)
+from CM.CM_TUW1.read_raster import raster_array
 from CM.CM_TUW23.f2_investment import dh_demand
 from CM.CM_TUW23.f3_coherent_areas import distribuition_costs
 from CM.CM_TUW23.f4_pre_optimization import pre_opt
@@ -31,6 +32,23 @@ def main(investment_start_year, investment_last_year, depreciation_time,
         trans_line_cap_cost: transmission line cost: power[MW], transmission
             line cost[EUR/m]
     """
+    # test input raster
+    in_raster_hdm_arr = raster_array(in_raster_hdm)
+    if len(np.nonzero(in_raster_hdm_arr)[0]) == 0:
+        in_raster_hdm_arr = None
+        covered_demand, dist_inv, dist_spec_cost, trans_inv, \
+        trans_spec_cost, trans_line_length, dist_pipe_len, \
+        heat_dem_1st, heat_dem_last, n_coh_areas, \
+        n_coh_areas_selected = np.zeros(11)
+        opt_term_cond = False
+        numLabels = 0
+        output_summary = summary(covered_demand, dist_inv, dist_spec_cost,
+                             trans_inv, trans_spec_cost, trans_line_length,
+                             dist_pipe_len, heat_dem_1st, heat_dem_last,
+                             n_coh_areas, n_coh_areas_selected, opt_term_cond, numLabels)
+        
+        return output_summary, opt_term_cond, edge_list 
+    in_raster_hdm_arr = None
     grid_factor = 1.05
     pixT = 10*np.arange(1, 135, 0.1)
     DH_threshold = 1
