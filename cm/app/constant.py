@@ -123,8 +123,8 @@ SIGNATURE = {
         "heat_tot_curr_density", "gfa_tot_curr_density"
     ],
     "type_layer_needed": [
-        {"type":"heat", "description": "Default heat density map - total is used"},
-        {"type": "gross_floor_area", "description": "Default gross floor area density map - total is used"}
+        {"type":"heat", "description": "Select heat demand density layer."},
+        {"type": "gross_floor_area", "description": "Select gross floor area density layer."}
     ],
     "cm_url": "Do not add anything",
     "cm_description": "this computation module can be used for the economic assessment of DH potential and DH grid investment.",
