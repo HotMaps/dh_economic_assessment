@@ -116,17 +116,17 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
         if len(edge_list) > 0:
             out_shp_edges = create_zip_shapefiles(output_directory, out_shp_edges)
             result["vector_layers"]=[
-                 {"name": "Coherent areas (economic and non-economic)", "path": out_shp_label, "type": "custom",
+                 {"name": "Coherent areas (economic and non-economic) shapefile", "path": out_shp_label, "type": "custom",
                       "symbology": [
                               {"red":222, "green":45, "blue":38, "opacity":0.7, "value":" No", "label":"Not Economic"},
                               {"red": 44, "green":162, "blue": 95, "opacity":0.7, "value":" Yes", "label":"Economic"}
                               ]},
                               
-                 {"name": "Transmission lines","path": out_shp_edges}
+                 {"name": "Transmission lines shapefile","path": out_shp_edges}
                   ]
         else:
             result["vector_layers"]=[
-                 {"name": "Coherent areas (economic and non-economic)", "path": out_shp_label, "type": "custom",
+                 {"name": "Coherent areas (economic and non-economic) shapefile", "path": out_shp_label, "type": "custom",
                       "symbology": [
                               {"red":222, "green":45, "blue":38, "opacity":0.7, "value":" No", "label":"Not Economic"},
                               {"red": 44, "green":162, "blue": 95, "opacity":0.7, "value":" Yes", "label":"Economic"}
