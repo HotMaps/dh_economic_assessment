@@ -26,7 +26,7 @@ def edge_representation(row_from_label, col_from_label, row_to_label,
         px0, py0 = X0 + 100 * px0_ind, Y0 - 100 * py0_ind
         px1, py1 = X0 + 100 * px1_ind, Y0 - 100 * py1_ind
         # G.add_edge((px0, py0), (px1, py1), weight=distance_matrix[s, t])
-        G.add_edge((px0, py0), (px1, py1), capacity=round(edge_weight, 2))
+        G.add_edge((px0, py0), (px1, py1), capacity=str(round(edge_weight, 2)) + " MW")
     nx.write_shp(G, outDir)
     spatialRef = osr.SpatialReference()
     spatialRef.ImportFromEPSG(epsg)
