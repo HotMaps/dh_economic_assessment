@@ -26,7 +26,7 @@ def edge_representation(row_from_label, col_from_label, row_to_label,
         px0, py0 = X0 + 100 * px0_ind, Y0 - 100 * py0_ind
         px1, py1 = X0 + 100 * px1_ind, Y0 - 100 * py1_ind
         # G.add_edge((px0, py0), (px1, py1), weight=distance_matrix[s, t])
-        G.add_edge((px0, py0), (px1, py1), weight=edge_weight)
+        G.add_edge((px0, py0), (px1, py1), capacity=round(edge_weight, 2))
     nx.write_shp(G, outDir)
     spatialRef = osr.SpatialReference()
     spatialRef.ImportFromEPSG(epsg)
@@ -36,10 +36,10 @@ def edge_representation(row_from_label, col_from_label, row_to_label,
         with open(prj_file, 'w') as file:
             file.write(spatialRef.ExportToWkt())
     G = None
-    '''
+    
     gdf = gpd.read_file(outDir + '/edges.shp')
 
-    gdf['line'] = np.array([1]*edge_list.shape[0])
+    #gdf['line'] = np.array([1]*edge_list.shape[0])
     gdf['color'] = np.array(["#ef3b2c"]*edge_list.shape[0])
     gdf['fillColor'] = np.array(["#ef3b2c"]*edge_list.shape[0])
     gdf['opacity'] = np.array(["0.7"]*edge_list.shape[0])
@@ -59,3 +59,4 @@ def edge_representation(row_from_label, col_from_label, row_to_label,
             os.rename(outDir + os.sep + filename, outDir + os.sep + os.path.splitext(os.path.basename(out_shp_edges))[0] + os.path.splitext(filename)[1])
         if filename.startswith("nodes"):
             os.rename(outDir + os.sep + filename, outDir + os.sep + os.path.splitext(os.path.basename(out_shp_nodes))[0] + os.path.splitext(filename)[1])
+    '''
