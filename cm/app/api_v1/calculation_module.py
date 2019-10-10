@@ -122,10 +122,7 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
                               {"red": 44, "green":162, "blue": 95, "opacity":0.7, "value":" Yes", "label":"Economic"}
                               ]},
                               
-                 {"name": "Transmission lines shapefile","path": out_shp_edges, "type": "custom",
-                      "symbology": [
-                              {"red":239, "green":59, "blue":44, "opacity":0.7, "value":"-", "label":"Line capacity in MW"}
-                              ]},
+                 {"name": "Transmission lines shapefile","path": out_shp_edges},
                   ]
         else:
             result["vector_layers"]=[
