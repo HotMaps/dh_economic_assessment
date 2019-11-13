@@ -14,8 +14,8 @@ if path not in sys.path:
 
 
 def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
-                  demand_coherent_area, dist_cost_coherent_area, obj_case=1,
-                  full_load_hours=3000, max_pipe_length=4000,
+                  demand_coherent_area, dist_cost_coherent_area, mip_gap,
+                  obj_case=1, full_load_hours=3000, max_pipe_length=4000,
                   logFile_path=None):
     # st = time.time()
     '''
@@ -198,9 +198,9 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
     m = en.ConcreteModel()
     solver = SolverFactory('gurobi', solver_io='python')
     # the gap between the lower and upper objective bound
-    solver.options["MIPGap"] = 1e-2
+    solver.options["MIPGap"] = mip_gap
     # the relative difference between the primal and dual objective value
-    solver.options["BarConvTol"] = 1e-4
+    solver.options["BarConvTol"] = 1e-1
     # set to 1 if you are interested in feasible solutions
     # set to 2 if no problem with finding good quality solution exist and you want to focus on optimality
     # set to 3 if the best objective bound is moving very slowly (or not at all), to focus on bound
@@ -208,7 +208,7 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
     # memory used. the rest will be written in the hard drive.
     solver.options["NodefileStart"] = 0.5
     # number of threads used by the solver
-    solver.options["Threads"] = 2
+    # solver.options["Threads"] = 2
 
     # ##########################################################################
     # ########## Sets:

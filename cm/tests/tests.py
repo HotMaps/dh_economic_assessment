@@ -51,6 +51,7 @@ class TestAPI(unittest.TestCase):
         inputs_parameter_selection["c1"] = "212"
         inputs_parameter_selection["c2"] = "4464"
         inputs_parameter_selection["full_load_hours"] = "3000"
+        inputs_parameter_selection["mip_gap"] = "0.1"
         
         
         

@@ -14,7 +14,7 @@ from CM.CM_TUW23.f8_show_in_graph import edge_representation
 
 
 def pre_opt(depreciation_time, interest_rate, grid_cost_ceiling,
-            trans_line_cap_cost, full_load_hours, in_raster_hdm,
+            trans_line_cap_cost, full_load_hours, mip_gap, in_raster_hdm,
             out_raster_coh_area_bool, out_raster_hdm_last_year,
             out_raster_dist_pipe_length, out_raster_maxDHdem,
             out_raster_labels, out_raster_invest_Euro, out_shp_prelabel,
@@ -88,7 +88,7 @@ def pre_opt(depreciation_time, interest_rate, grid_cost_ceiling,
     pow_range_matrix = trans_line_cap_cost[:, 0]
     term_cond, dh, edge_list = optimize_dist(grid_cost_ceiling, cost_matrix,
                                              pow_range_matrix, distance_matrix,
-                                             q, q_spec_cost)
+                                             q, q_spec_cost, mip_gap)
 
     grid_cost_header = 'Connected at %0.2f EUR/MWh' % grid_cost_ceiling
     df[grid_cost_header] = dh[:-6]
