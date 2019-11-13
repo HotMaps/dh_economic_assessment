@@ -491,7 +491,7 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
         # print(time.time() - st)
         # print(value(m.obj))
         graph = convertYsToNetworkx()
-        ccs = list(nx.connected_component_subgraphs(graph))
+        ccs = list(graph.subgraph(c) for c in nx.connected_components(graph))
         for cc in ccs:
             m.ccConstraints.add(createConstForCC(m, cc))
         number_of_nodes = sum(m.q_bool[i] for i in m.index_row)
