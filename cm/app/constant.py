@@ -111,8 +111,7 @@ INPUTS_CALCULATION_MODULE = [
                'input_max': 8760,
                'cm_id': CM_ID
                },
-               {#'input_name': 'MIP Gap - The lower Gap, the higher accuracy and solving time',
-                'input_name': 'MIP Gap',
+               {'input_name': 'MIP Gap - The lower Gap, the higher accuracy and solving time',
                 'input_type': 'range',
                 'input_parameter_name': 'mip_gap',
                 'input_value': '0.1',
