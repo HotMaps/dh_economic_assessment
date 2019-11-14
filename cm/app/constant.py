@@ -78,7 +78,7 @@ INPUTS_CALCULATION_MODULE = [
               {'input_name': 'DH grid cost ceiling',
                'input_type': 'input',
                'input_parameter_name': 'grid_cost_ceiling',
-               'input_value': '15',
+               'input_value': '25',
                'input_unit': 'EUR/MWh',
                'input_min': 0.1,
                'input_max': 200,
