@@ -53,7 +53,7 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
     c1 = float(inputs_parameter_selection["c1"])
     c2 = float(inputs_parameter_selection["c2"])
     full_load_hours = int(inputs_parameter_selection["full_load_hours"])
-    mip_gap = float(inputs_parameter_selection["mip_gap"])
+    mip_gap = 0.01*float(inputs_parameter_selection["mip_gap"])
 
     
     # input raster layers: (gfa:= gross floor area; hdm:= heat density map)
@@ -107,7 +107,7 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
             )
 
     result = dict()
-    
+
     if opt_term_cond:
         out_shp_label = create_zip_shapefiles(output_directory, out_shp_label)
         result['name'] = CM_NAME
