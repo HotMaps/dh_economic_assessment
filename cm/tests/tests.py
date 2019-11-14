@@ -29,6 +29,8 @@ class TestAPI(unittest.TestCase):
     def test_compute(self):
         raster_file1_path = 'tests/data/gfa_Wien.tif'
         raster_file2_path = 'tests/data/hdm_Wien.tif'
+        #raster_file1_path = 'tests/data/gfa_besancon.tif'
+        #raster_file2_path = 'tests/data/hdm_besancon.tif'
         # simulate copy from HTAPI to CM
         save_path1 = UPLOAD_DIRECTORY+"/gfa_Wien.tif"
         save_path2 = UPLOAD_DIRECTORY+"/hdm_Wien.tif"

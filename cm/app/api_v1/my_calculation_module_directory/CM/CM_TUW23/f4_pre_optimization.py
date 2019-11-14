@@ -89,7 +89,6 @@ def pre_opt(depreciation_time, interest_rate, grid_cost_ceiling,
     term_cond, dh, edge_list = optimize_dist(grid_cost_ceiling, cost_matrix,
                                              pow_range_matrix, distance_matrix,
                                              q, q_spec_cost, mip_gap)
-
     grid_cost_header = 'Connected at %0.2f EUR/MWh' % grid_cost_ceiling
     df[grid_cost_header] = dh[:-6]
     df['label'] = df.index + 1
