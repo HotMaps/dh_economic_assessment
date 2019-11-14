@@ -117,9 +117,12 @@ INPUTS_CALCULATION_MODULE = [
                 'input_value': '0.1',
                 'input_priority': '1',
                 'input_unit': ' ',
-                'input_min': 0.01,
-                'input_max': 0.10,
-                'input_step': 0.01,
+                #'input_min': 0.01,
+                #'input_max': 0.10,
+                #'input_step': 0.01,
+                'input_min':1,
+                'input_max':10,
+                'input_step': 1,
                 'cm_id': CM_ID
                  }
               ]
