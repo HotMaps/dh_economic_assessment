@@ -114,7 +114,7 @@ INPUTS_CALCULATION_MODULE = [
                {'input_name': 'MIPGap*1e-2 (Smaller gap leads to higher accuracy at cost of higher time)',
                 'input_type': 'range',
                 'input_parameter_name': 'mip_gap',
-                'input_value': '1',
+                'input_value': '10',
                 'input_priority': '1',
                 'input_unit': ' ',
                 #'input_min': 0.01,
