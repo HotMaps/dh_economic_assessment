@@ -108,7 +108,6 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
 
     result = dict()
     
-
     if opt_term_cond:
         out_shp_label = create_zip_shapefiles(output_directory, out_shp_label)
         result['name'] = CM_NAME
