@@ -213,7 +213,7 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
     # set to 3 if the best objective bound is moving very slowly (or not at all), to focus on bound
     solver.options["MIPFocus"] = 1
     # memory used. the rest will be written in the hard drive.
-    solver.options["NodefileStart"] = 0.5
+    # solver.options["NodefileStart"] = 0.5
     # number of threads used by the solver
     # solver.options["Threads"] = 2
 
