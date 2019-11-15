@@ -8,6 +8,7 @@ from ..helper import generate_output_file_shp
 from ..helper import generate_output_file_csv
 from ..helper import create_zip_shapefiles
 import my_calculation_module_directory.CM.CM_TUW23.run_cm as CM23
+import datetime
 
 from ..constant import CM_NAME
 def calculation(output_directory, inputs_raster_selection, inputs_parameter_selection):
@@ -138,4 +139,5 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
     if horizon > depreciation_time:
         output_summary = output_summary + [{"unit": "-", "name": "Warning: Study horizon is longer than depreciation time. The calculation was done only till the end of depreciation time!", "value": 0.0}]
     result['indicator'] = output_summary
+    print(datetime.datetime.now().strftime('%y-%m-%d %a %H:%M:%S'))
     return result
