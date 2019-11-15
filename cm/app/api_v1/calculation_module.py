@@ -133,7 +133,6 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
                               {"red":222, "green":45, "blue":38, "opacity":0.7, "value":" No", "label":"Not Economic"},
                               {"red": 44, "green":162, "blue": 95, "opacity":0.7, "value":" Yes", "label":"Economic"}
                               ]}]
-
         result["tabular"]=[{"name": "Summary of results","path": out_csv_solution}]
     horizon = investment_last_year - investment_start_year + 1
     if horizon > depreciation_time:
