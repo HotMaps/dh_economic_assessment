@@ -54,7 +54,10 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
     G = np.argmax(demand_coherent_area)
     G2 = np.argsort(demand_coherent_area)[-2]
     n = demand_coherent_area.shape[0]
-
+    
+    '''
+    
+    
     # cut to more distant areas
     # Keep only connections to the x closest Areas
     x = min(7.0, n-1)
@@ -194,7 +197,11 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
     # np.savetxt('AddConection.csv', AddConection, delimiter=",")
     # np.savetxt('distance_matrix_final.csv', distance_matrix, delimiter=",")
     # print("Connections after additional Connections: %i" %(distance_matrix.size - fix_to_zero_index.shape[0] - n))
-
+    
+    '''
+    
+    
+    
     m = en.ConcreteModel()
     solver = SolverFactory('gurobi', solver_io='python')
     # the gap between the lower and upper objective bound
@@ -254,12 +261,12 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
     # set the largest demand zone to be part of the result
     m.q_bool[G].fix(1)
 
-
+    '''
     for i in range(fix_to_zero_index.shape[0]):
         s, t = fix_to_zero_index[i, :]
         m.l_bool[s, t].fix(0)
         m.line_capacity[s, t].fix(0)
-    
+    '''
 
     for i in range(len(demand_coherent_area)):
         # Lowest transmission line capacity is 0.2 Mw. Intercept of the cost function
