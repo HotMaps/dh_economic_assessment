@@ -139,5 +139,5 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
     if horizon > depreciation_time:
         output_summary = output_summary + [{"unit": "-", "name": "Warning: Study horizon is longer than depreciation time. The calculation was done only till the end of depreciation time!", "value": 0.0}]
     result['indicator'] = output_summary
-    print(datetime.datetime.now().strftime('%y-%m-%d %a %H:%M:%S'))
+    datetime.datetime.now().strftime('%y-%m-%d %a %H:%M:%S')
     return result
