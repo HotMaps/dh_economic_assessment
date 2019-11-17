@@ -79,12 +79,17 @@ def dh_demand(c1, c2, raster_plotratio, raster_hdm, start_year, last_year,
         rest_annuity_factor = alpha_depr - alpha_horizon
         q = q + q_new * rest_annuity_factor
     linearHeatDensity = q_max / L
-    # this step is performed to avoid negative effective pipe diameter
+    # this step is performed to avoid negative average pipe diameter
     LHD_THRESHOLD = -dA_intercept/dA_slope
     filtered_LHD = (np.log(linearHeatDensity) < LHD_THRESHOLD).astype(int)
     elements = np.nonzero(filtered_LHD)[0]
     dA = dA_slope * (np.log(linearHeatDensity)) + dA_slope
     dA[elements] = 0
+    # lower limit of linear heat densities at 1.5 GJ/m was set. Below this
+    # threshold, pipe diameters of 0.02m were applied uniformly for all hectare
+    # grid cells with present heat density values above zero.
+    # Note: linearHeatDensity is calculated for cells with heat demand above zero
+    dA[((linearHeatDensity < 1.5).astype(int) * (dA > 0).astype(int)).astype(bool)] = 0.02
     q_max[elements] = 0
     denominator = q / L
     """ # old code
