@@ -8,9 +8,9 @@ from ..helper import generate_output_file_shp
 from ..helper import generate_output_file_csv
 from ..helper import create_zip_shapefiles
 import my_calculation_module_directory.CM.CM_TUW23.run_cm as CM23
-import datetime
-
 from ..constant import CM_NAME
+
+
 def calculation(output_directory, inputs_raster_selection, inputs_parameter_selection):
     '''
     def calculation()
@@ -109,7 +109,7 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
 
     result = dict()
 
-    if opt_term_cond:
+    if opt_term_cond==True:
         out_shp_label = create_zip_shapefiles(output_directory, out_shp_label)
         result['name'] = CM_NAME
         result["raster_layers"]=[
@@ -134,9 +134,9 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
                               {"red": 44, "green":162, "blue": 95, "opacity":0.7, "value":" Yes", "label":"Economic"}
                               ]}]
         result["tabular"]=[{"name": "Summary of results","path": out_csv_solution}]
+
     horizon = investment_last_year - investment_start_year + 1
     if horizon > depreciation_time:
         output_summary = output_summary + [{"unit": "-", "name": "Warning: Study horizon is longer than depreciation time. The calculation was done only till the end of depreciation time!", "value": 0.0}]
     result['indicator'] = output_summary
-    datetime.datetime.now().strftime('%y-%m-%d %a %H:%M:%S')
     return result

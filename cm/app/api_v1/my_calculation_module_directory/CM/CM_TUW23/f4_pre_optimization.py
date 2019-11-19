@@ -101,13 +101,13 @@ def pre_opt(depreciation_time, interest_rate, grid_cost_ceiling,
     df = df[headers]
 
     df.to_csv(out_csv_solution)
-    if polygonize_region and term_cond:
+    if polygonize_region and term_cond==True:
         economic_bool = dh[:-6]
         poly(heat_dem_coh_last, heat_dem_spec_area, q, q_spec_cost,
              economic_bool, area_coh_area, out_raster_coh_area_bool,
              out_raster_labels, out_shp_prelabel, out_shp_label)
     node_label_list = np.arange(1, nr_coherent+1) * dh[0: -6]
-    if term_cond:
+    if term_cond==True:
         if len(edge_list) > 0:
             edge_representation(row_from_label, col_from_label, row_to_label,
                                 col_to_label, distance_matrix, node_label_list,

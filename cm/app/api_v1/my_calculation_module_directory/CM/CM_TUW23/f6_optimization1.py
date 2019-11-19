@@ -4,7 +4,8 @@ import numpy as np
 import networkx as nx
 import pyomo.environ as en
 from pyomo.opt import SolverFactory
-from pyomo.opt import TerminationCondition, SolverStatus
+from pyomo.opt import TerminationCondition
+import time
 
 
 path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.
@@ -54,6 +55,7 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
     G = np.argmax(demand_coherent_area)
     G2 = np.argsort(demand_coherent_area)[-2]
     n = demand_coherent_area.shape[0]
+    
     '''
     
     
@@ -198,6 +200,9 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
     # print("Connections after additional Connections: %i" %(distance_matrix.size - fix_to_zero_index.shape[0] - n))
     
     '''
+    
+    
+    
     m = en.ConcreteModel()
     solver = SolverFactory('gurobi', solver_io='python')
     # the gap between the lower and upper objective bound
@@ -212,7 +217,7 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
     # solver.options["NodefileStart"] = 0.5
     # number of threads used by the solver
     # solver.options["Threads"] = 2
-    solver.options["TimeLimit"] = 300
+    solver.options["TimeLimit"] = 30
 
     # ##########################################################################
     # ########## Sets:
@@ -236,9 +241,14 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
     m.dist_cost = en.Param(m.index_row, initialize=distribution_cost)
 
     def l_length(m, i, j):
-        return distance_matrix[i, j]
+        # in order to oblige line_cost in overall_cost_rule to zero
+        if demand_coherent_area[i]/full_load_hours < 0.2:
+            return 0
+        elif demand_coherent_area[j]/full_load_hours < 0.2:
+            return 0
+        else:
+            return distance_matrix[i, j]
     m.line_length = en.Param(m.index_row, m.index_col, initialize=l_length)
-
     # ##########################################################################
     # ########## Variables:
     # ##########################################################################
@@ -251,14 +261,14 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
                          initialize=0)
     # set the largest demand zone to be part of the result
     m.q_bool[G].fix(1)
-    for i in m.index_row:
-        m.l_bool[i, G].fix(0)
-        m.l_bool[i, i].fix(0)
-        m.line_capacity[i, G].fix(0)
-        m.line_capacity[i, i].fix(0)
-        
 
     '''
+    for i in range(fix_to_zero_index.shape[0]):
+        s, t = fix_to_zero_index[i, :]
+        m.l_bool[s, t].fix(0)
+        m.line_capacity[s, t].fix(0)
+    '''
+
     for i in range(len(demand_coherent_area)):
         # Lowest transmission line capacity is 0.2 Mw. Intercept of the cost function
         # in the piecewise linear expresion is 242.87. It should be set to zero if the
@@ -269,7 +279,7 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
                 m.line_capacity[i, j].fix(0)
                 m.l_bool[j, i].fix(0)
                 m.line_capacity[j, i].fix(0)
-    '''
+
     # ##########################################################################
     # ########## Constraints:
     # ##########################################################################
@@ -289,8 +299,7 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
 
     def edge_connectivity_rule(m, i):
         if i == G:
-            # l_bool[x, G] are already fixed to zero
-            return en.Constraint.Skip
+            return 0 == sum(m.l_bool[j, i] for j in m.index_row)
         else:
             return m.q_bool[i] <= sum(m.l_bool[j, i] for j in m.index_row)
     m.edge_connectivity = en.Constraint(m.index_row,
@@ -307,17 +316,19 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
     m.edge_connectivity_2 = en.Constraint(m.index_row, m.index_col,
                                           rule=edge_connectivity_2_rule)
 
-    def edge_connectivity_3_rule(m, i):
-        if i == G:
-            return en.Constraint.Skip
-        else:
-            return sum(m.l_bool[h, i] for h in m.index_row) <= 1
-    m.edge_connectivity_3 = en.Constraint(m.index_row, rule=edge_connectivity_3_rule)
-
     def edge_active_rule(m, i, j):
         return 2*(m.l_bool[i, j] + m.l_bool[j, i]) <= m.q_bool[i] + m.q_bool[j]
     m.edge_active = en.Constraint(m.index_row, m.index_col,
                                   rule=edge_active_rule)
+
+    def self_loop_rule(m, i):
+        return m.l_bool[i, i] == 0
+    m.self_loop = en.Constraint(m.index_row, rule=self_loop_rule)
+
+    def uni_directed_edge_rule(m, i, j):
+        return m.l_bool[i, j] + m.l_bool[j, i] <= 1
+    m.uni_directed_edge = en.Constraint(m.index_row, m.index_col,
+                                        rule=uni_directed_edge_rule)
 
     def capacity_lower_bound_rule(m, i, j):
         return m.line_capacity[i, j] >= (m.l_bool[i, j]*m.q[j])/full_load_hours
@@ -337,11 +348,6 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
     m.force_cap_to_zero = en.Constraint(m.index_row, m.index_col,
                                         rule=force_cap_to_zero_rule)
 
-    def force_cap_to_zero_2_rule(m, i, j):
-        return m.line_capacity[i, j] + 0.99 >= m.l_bool[i, j]
-    m.force_cap_to_zero_2 = en.Constraint(m.index_row, m.index_col,
-                                        rule=force_cap_to_zero_2_rule)
-
     def capacity_flow_rule(m, i):
         if i == G:
             return sum(m.line_capacity[G, h] for h in m.index_col) == \
@@ -353,6 +359,14 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
                 m.q_bool[i]*m.q[i]/full_load_hours
     m.capacity_flow = en.Constraint(m.index_row, rule=capacity_flow_rule)
 
+    def self_loop_capacity_rule(m, i):
+        return m.line_capacity[i, i] == 0
+    m.self_loop_capacity = en.Constraint(m.index_row,
+                                         rule=self_loop_capacity_rule)
+
+
+
+    
     def f(m, i, j, x):
         if x >= pow_range_matrix[0] and x < pow_range_matrix[1]:
             return x * (cost_matrix[1] - cost_matrix[0])/(pow_range_matrix[1] - pow_range_matrix[0])
@@ -390,6 +404,51 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
     m.pw_con = en.Piecewise(m.index_row, m.index_col, m.line_cost, m.line_capacity,
                                 pw_pts=list(pow_range_matrix), pw_constr_type='EQ', f_rule=f)
     
+    
+    
+    
+    '''
+    # #################################################################
+    #bpts = list(np.linspace(0, 20, 201)) + list(np.linspace(21, max_cap + 2, 1482))
+    bpts = list(pow_range_matrix) + [pow_range_matrix[-1:][0] + 2]
+    def cost_func(m, i, j, xp):
+        # we not need j, but it is passed as the index for the constraint
+        return 3.83338211e-06*xp**3 - 6.60615285e-03*xp**2 + 5.22996971*xp + 2.42878414e+02
+
+    m.specific_cost = en.Piecewise(m.index_row, m.index_col, m.line_cost, m.line_capacity, pw_pts=bpts, pw_constr_type='EQ', f_rule=cost_func)
+
+    # #################################################################
+    
+    def cost_range_limit_rule(m, i, j, k):
+        return m.cost_range_bool[i, j, k] <= m.l_bool[i, j]
+    m.cost_range_limit = en.Constraint(m.index_row, m.index_col, m.index_cap,
+                                       rule=cost_range_limit_rule)
+
+    def cost_range_limit_2_rule(m, i, j, k):
+        if k == 0 or k == last_cost_step:
+            return en.Constraint.Skip
+        else:
+            return m.cost_range_bool[i, j, k+1] <= m.cost_range_bool[i, j, k]
+    m.cost_range_limit_2 = en.Constraint(m.index_row, m.index_col, m.index_cap,
+                                         rule=cost_range_limit_2_rule)
+
+    def cost_range_limit_3_rule(m, i, j):
+        return 0 <= m.line_capacity[i, j] - \
+            sum((m.pow_step_ranges[k] - m.pow_step_ranges[k-1]) *
+                m.cost_range_bool[i, j, k+1]
+                for k in m.index_cap if (k > 0 and k < last_cost_step))
+    m.cost_range_limit_3 = en.Constraint(m.index_row, m.index_col,
+                                         rule=cost_range_limit_3_rule)
+
+    def cost_range_limit_4_rule(m, i, j):
+        return 0 <= sum((m.pow_step_ranges[k] - m.pow_step_ranges[k-1]) *
+                        m.cost_range_bool[i, j, k]
+                        for k in m.index_cap if k > 0) - m.line_capacity[i, j]
+    m.cost_range_limit_4 = en.Constraint(m.index_row, m.index_col,
+                                         rule=cost_range_limit_4_rule)
+    '''
+    m.ccConstraints = en.ConstraintList()
+
     def obj_rule_1(m):
         # OBJ1: Revenue-Oriented Prize Collecting
         return sum(m.th[i]*m.q_bool[i]*m.q[i] for i in m.index_row) - \
@@ -411,8 +470,48 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
                          '"1" for Revenue-Oriented Prize Collection or "2" '
                          'for Profit-Oriented Prize Collection')
 
-    results = solver.solve(m, report_timing=False, tee=False, logfile="gurobi.log")
-    
+
+
+    def convertYsToNetworkx():
+        """Convert the m's Y variables into a networkx object."""
+        ans = nx.Graph()
+        edges = [(i, j) for i in m.index_row
+                 for j in m.index_col if (en.value(m.l_bool[i, j]) == 1)]
+        ans.add_edges_from(edges)
+        return ans
+
+
+    def createConstForCC(m, cc):
+        cc = dict.fromkeys(cc)
+        return sum(m.l_bool[i, j] for i in m.index_row
+                   for j in m.index_col
+                   if ((i in cc) and (j in cc))) <= len(cc) - 1
+
+    done = False
+    results = None
+
+    # print(time.time() -st)
+    st = time.time()
+    time_flag = False
+    while not done:
+        # Solve once and add subtour elimination constraints if necessary
+        # Finish when there are no more subtours
+        results = solver.solve(m, report_timing=False, tee=False, logfile="gurobi.log")
+
+        # print(time.time() - st)
+        # print(value(m.obj))
+        graph = convertYsToNetworkx()
+        ccs = list(graph.subgraph(c) for c in nx.connected_components(graph))
+        for cc in ccs:
+            m.ccConstraints.add(createConstForCC(m, cc))
+        number_of_nodes = sum(m.q_bool[i] for i in m.index_row)
+        if len(ccs) == 0:
+            done = True
+        elif ccs[0].number_of_nodes() == number_of_nodes:
+            done = True
+        if time.time() - st > 30:
+            time_limit_flag = True
+            break
     
     
     
@@ -422,8 +521,10 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
     
     
     
+    
+    
     term_cond = results.solver.termination_condition == TerminationCondition.optimal
-    if results.solver.status == SolverStatus.aborted:
+    if time_limit_flag == True:
         term_cond = "aborted"
     # print('term_cond: ', term_cond)
     '''

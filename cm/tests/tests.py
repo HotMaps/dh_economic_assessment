@@ -29,8 +29,6 @@ class TestAPI(unittest.TestCase):
     def test_compute(self):
         raster_file1_path = 'tests/data/gfa_Wien.tif'
         raster_file2_path = 'tests/data/hdm_Wien.tif'
-        #raster_file1_path = 'tests/data/gfa_besancon.tif'
-        #raster_file2_path = 'tests/data/hdm_besancon.tif'
         # simulate copy from HTAPI to CM
         save_path1 = UPLOAD_DIRECTORY+"/gfa_Wien.tif"
         save_path2 = UPLOAD_DIRECTORY+"/hdm_Wien.tif"
@@ -54,9 +52,7 @@ class TestAPI(unittest.TestCase):
         inputs_parameter_selection["c2"] = "4464"
         inputs_parameter_selection["full_load_hours"] = "3000"
         inputs_parameter_selection["mip_gap"] = "10"
-        
-        
-        
+
         # register the calculation module a
         payload = {"inputs_raster_selection": inputs_raster_selection,
                    "inputs_parameter_selection": inputs_parameter_selection}

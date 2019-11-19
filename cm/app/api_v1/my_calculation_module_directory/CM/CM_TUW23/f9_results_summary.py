@@ -14,8 +14,8 @@ def summary(covered_demand, dist_inv, dist_spec_cost, trans_inv,
     elif numLabels > 70:
         summary = [{"unit": "-", "name": "Too many coherent areas. consider to change input parameters!", "value": 0.0}]
     else:
-        if not term_cond:
-            summary = [{"unit": "MWh", "name": "District heating potential for given input parameters", "value": 0.0}]
+        if term_cond=="aborted":
+            summary = [{"unit": "-", "name": "For given input parameters, the optimization time limit was reached with no result. Modify your inputs or your selection and run again.", "value": 0.0}]
         else:
             summary = [{"unit": "MWh", "name": "Total demand in selected region in the first year of investment", "value": float(round(heat_dem_1st, 2))},
                        {"unit": "MWh", "name": "Total demand in selected region in the last year of investment", "value": float(round(heat_dem_last, 2))},
