@@ -15,7 +15,7 @@ if path not in sys.path:
 
 def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
                   demand_coherent_area, dist_cost_coherent_area, mip_gap,
-                  obj_case=1, full_load_hours=3000, max_pipe_length=4000,
+                  obj_case=1, full_load_hours=3000, max_pipe_length=3000,
                   logFile_path=None):
     # st = time.time()
     '''
@@ -257,7 +257,11 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
         m.line_capacity[i, G].fix(0)
         m.line_capacity[i, i].fix(0)
         
-
+    for i in m.index_row:
+        for j in m.index_col:
+            if distance_matrix[i, j] > max_pipe_length:
+                m.l_bool[i, j].fix(0)
+                m.line_capacity[i, j].fix(0)
     '''
     for i in range(len(demand_coherent_area)):
         # Lowest transmission line capacity is 0.2 Mw. Intercept of the cost function
@@ -412,20 +416,12 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
                          'for Profit-Oriented Prize Collection')
 
     results = solver.solve(m, report_timing=False, tee=False, logfile="gurobi.log")
-    
-    
-    
-    
-    print(results.solver.termination_condition)
-    
-    print("test: ", results.solver.status)
-    
-    
-    
+    print("Solver Termination: ", results.solver.termination_condition)
+    print("Solver Status: ", results.solver.status)
     term_cond = results.solver.termination_condition == TerminationCondition.optimal
     if results.solver.status == SolverStatus.aborted:
         term_cond = "aborted"
-    # print('term_cond: ', term_cond)
+
     '''
     ##################
     # save variable values to a csv file
