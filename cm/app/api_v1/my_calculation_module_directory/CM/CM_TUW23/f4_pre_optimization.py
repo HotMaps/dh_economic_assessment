@@ -13,7 +13,6 @@ from CM.CM_TUW23.f7_polygonize import polygonize as poly
 from CM.CM_TUW23.f8_show_in_graph import edge_representation
 
 
-
 def pre_opt(depreciation_time, interest_rate, grid_cost_ceiling,
             trans_line_cap_cost, full_load_hours, mip_gap, in_raster_hdm,
             out_raster_coh_area_bool, out_raster_hdm_last_year,
@@ -32,7 +31,7 @@ def pre_opt(depreciation_time, interest_rate, grid_cost_ceiling,
     hdm_1st_arr = raster_array(in_raster_hdm)
     dist_invest_arr = raster_array(out_raster_invest_Euro)
     maxDHdem_arr = raster_array(out_raster_maxDHdem)
-    # prepare dataframe for final answers
+    # prepare dataframe for final answers.
     heat_dem_coh_1st = np.zeros((nr_coherent))
     heat_dem_coh_last = np.zeros((nr_coherent))
     heat_dem_spec_area = np.zeros((nr_coherent))
