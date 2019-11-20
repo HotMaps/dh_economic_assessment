@@ -340,12 +340,12 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
         return m.line_capacity[i, j] - m.l_bool[i, j]*m.cap_up <= 0
     m.force_cap_to_zero = en.Constraint(m.index_row, m.index_col,
                                         rule=force_cap_to_zero_rule)
-
+    '''
     def force_cap_to_zero_2_rule(m, i, j):
         return m.line_capacity[i, j] + 0.99 >= m.l_bool[i, j]
     m.force_cap_to_zero_2 = en.Constraint(m.index_row, m.index_col,
                                         rule=force_cap_to_zero_2_rule)
-
+    '''
     def capacity_flow_rule(m, i):
         if i == G:
             return sum(m.line_capacity[G, h] for h in m.index_col) == \
@@ -447,11 +447,22 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
         dist_inv += dh[i]*demand_coherent_area[i] * dist_cost_coherent_area[i]
     for i in range(n):
         for j in range(n):
-            if en.value(m.l_bool[i, j]) == 1:
+            if en.value(m.l_bool[i, j]) > 0:
                 trans_inv += en.value(m.line_cost[i, j]) * \
                                 en.value(m.line_length[i, j])
                 trans_line_length += en.value(m.line_length[i, j])
                 edge_list.append([i, j, en.value(m.line_capacity[i, j])])
+    '''
+    for i in range(n):
+        for j in range(n):
+            if en.value(m.l_bool[i, j]) > 0:
+                print(i, " , ", j, "\t capacity: ", en.value(m.line_capacity[i, j]), "\t line: ", en.value(m.l_bool[i, j]))
+    print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
+    for i in range(n):
+        for j in range(n):
+            if en.value(m.line_capacity[i, j]) > 0:
+                print(i, " , ", j, "\t capacity: ", en.value(m.line_capacity[i, j]), "\t line: ", en.value(m.l_bool[i, j]))
+    '''
     # meter to km
     trans_line_length /= 1000
     dist_spec_cost = dist_inv/covered_demand
