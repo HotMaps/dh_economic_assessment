@@ -31,16 +31,16 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
         
 
     Outputs:
-        out_raster_maxDHdem: max demand should be covered by DH during the investment period [MWh].
-        out_raster_invest_Euro: distribution grid investment [EUR/MWh].
-        out_raster_hdm_last_year: heat density map at the end of investment period.
-        out_raster_dist_pipe_length: distribution grid pipeline length [m/m2].
-        out_raster_coh_area_bool: shows both economic and non-economic coherent areas.
-        out_raster_hdm_in_dh_reg_last_year: heat densities in the last year of investment within the coherent areas.
+        out_raster_maxDHdem: max demand should be covered by DH during the investment period [MWh],
+        out_raster_invest_Euro: distribution grid investment [EUR/MWh],
+        out_raster_hdm_last_year: heat density map at the end of investment period,
+        out_raster_dist_pipe_length: distribution grid pipeline length [m/m2],
+        out_raster_coh_area_bool: shows both economic and non-economic coherent areas,
+        out_raster_hdm_in_dh_reg_last_year: heat densities in the last year of investment within the coherent areas,
         out_raster_labels,
         out_shp_prelabel,
         out_shp_label,
-        out_csv_solution
+        out_csv_solution.
     '''
     # input parameters
     investment_start_year = int(inputs_parameter_selection["investment_start_year"])
