@@ -12,7 +12,7 @@ LOG_FORMAT = ('%(levelname) -10s %(asctime)s %(name) -30s %(funcName) '
 LOGGER = logging.getLogger(__name__)
 queue_name =  RPC_Q + str(CM_ID)
 parameters = pika.URLParameters(CELERY_BROKER_URL)
-parameters.blocked_connection_timeout = 36000
+parameters.heartbeat_interval = 0
 connection = pika.BlockingConnection(parameters)
 
 channel = connection.channel()
