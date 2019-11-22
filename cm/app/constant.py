@@ -1,4 +1,4 @@
-
+CELERY_BROKER_TIMEOUT = 36000
 CELERY_BROKER_URL_DOCKER = 'amqp://admin:mypass@rabbit:5672/'
 CELERY_BROKER_URL_LOCAL = 'amqp://localhost/'
 
