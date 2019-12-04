@@ -8,6 +8,7 @@ from ..helper import generate_output_file_shp
 from ..helper import generate_output_file_csv
 from ..helper import create_zip_shapefiles
 import my_calculation_module_directory.CM.CM_TUW23.run_cm as CM23
+from my_calculation_module_directory.CM.CM_TUW0.rem_mk_dir import rm_file
 from ..constant import CM_NAME
 
 
@@ -63,6 +64,7 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
     
     # output raster layers
     out_raster_maxDHdem = generate_output_file_tif(output_directory)
+    out_raster_economic_maxDHdem = generate_output_file_tif(output_directory)
     out_raster_invest_Euro = generate_output_file_tif(output_directory)
     out_raster_hdm_last_year = generate_output_file_tif(output_directory)
     out_raster_dist_pipe_length = generate_output_file_tif(output_directory)
@@ -94,6 +96,7 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
             in_raster_gfa,
             in_raster_hdm,
             out_raster_maxDHdem,
+            out_raster_economic_maxDHdem,
             out_raster_invest_Euro,
             out_raster_hdm_last_year,
             out_raster_dist_pipe_length,
@@ -106,14 +109,20 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
             out_csv_solution,
             output_directory
             )
-
+    
+    rm_file(out_raster_maxDHdem, out_raster_maxDHdem[:-4] + ".tfw",
+            out_raster_invest_Euro, out_raster_invest_Euro[:-4] + ".tfw",
+            out_raster_dist_pipe_length, out_raster_dist_pipe_length[:-4] + ".tfw",
+            out_raster_coh_area_bool, out_raster_coh_area_bool[:-4] + ".tfw",
+            out_raster_labels, out_raster_labels[:-4] + ".tfw")
     result = dict()
 
     if opt_term_cond==True:
         out_shp_label = create_zip_shapefiles(output_directory, out_shp_label)
         result['name'] = CM_NAME
         result["raster_layers"]=[
-              {"name": "heat demand density in the last year of the investment","path": out_raster_hdm_last_year, "type": "heat"}
+              {"name": "heat demand density in the last year of the investment","path": out_raster_hdm_last_year, "type": "heat"},
+              {"name": "heat demand covered by DH in the last year of the investment","path": out_raster_economic_maxDHdem, "type": "heat"}
               ]
         if len(edge_list) > 0:
             out_shp_edges = create_zip_shapefiles(output_directory, out_shp_edges)
