@@ -29,7 +29,6 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
         full_load_hours: full load hours require for calculating the right pipe dimension, by default it is set to 3000.
         in_raster_gfa: gross floor area map for the selected zone.
         in_raster_hdm: heat density map for the selected zone.
-        
 
     Outputs:
         out_raster_maxDHdem: max demand should be covered by DH during the investment period [MWh],
