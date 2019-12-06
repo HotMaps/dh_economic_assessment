@@ -4,7 +4,7 @@ import numpy as np
 import networkx as nx
 import pyomo.environ as en
 from pyomo.opt import SolverFactory
-from pyomo.opt import TerminationCondition
+from pyomo.opt import TerminationCondition, SolverStatus
 
 
 path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.
@@ -14,8 +14,8 @@ if path not in sys.path:
 
 
 def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
-                  demand_coherent_area, dist_cost_coherent_area, obj_case=1,
-                  full_load_hours=3000, max_pipe_length=4000,
+                  demand_coherent_area, dist_cost_coherent_area, mip_gap,
+                  obj_case=1, full_load_hours=3000, max_pipe_length=3000,
                   logFile_path=None):
     # st = time.time()
     '''
@@ -54,7 +54,9 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
     G = np.argmax(demand_coherent_area)
     G2 = np.argsort(demand_coherent_area)[-2]
     n = demand_coherent_area.shape[0]
-
+    '''
+    
+    
     # cut to more distant areas
     # Keep only connections to the x closest Areas
     x = min(7.0, n-1)
@@ -194,21 +196,23 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
     # np.savetxt('AddConection.csv', AddConection, delimiter=",")
     # np.savetxt('distance_matrix_final.csv', distance_matrix, delimiter=",")
     # print("Connections after additional Connections: %i" %(distance_matrix.size - fix_to_zero_index.shape[0] - n))
-
+    
+    '''
     m = en.ConcreteModel()
     solver = SolverFactory('gurobi', solver_io='python')
     # the gap between the lower and upper objective bound
-    solver.options["MIPGap"] = 1e-2
+    solver.options["MIPGap"] = mip_gap
     # the relative difference between the primal and dual objective value
-    solver.options["BarConvTol"] = 1e-4
+    solver.options["BarConvTol"] = 1e-1
     # set to 1 if you are interested in feasible solutions
     # set to 2 if no problem with finding good quality solution exist and you want to focus on optimality
     # set to 3 if the best objective bound is moving very slowly (or not at all), to focus on bound
-    solver.options["MIPFocus"] = 1
+    solver.options["MIPFocus"] = 3
     # memory used. the rest will be written in the hard drive.
-    solver.options["NodefileStart"] = 0.5
+    # solver.options["NodefileStart"] = 0.5
     # number of threads used by the solver
-    solver.options["Threads"] = 2
+    # solver.options["Threads"] = 2
+    solver.options["TimeLimit"] = 300
 
     # ##########################################################################
     # ########## Sets:
@@ -232,13 +236,7 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
     m.dist_cost = en.Param(m.index_row, initialize=distribution_cost)
 
     def l_length(m, i, j):
-        # in order to oblige line_cost in overall_cost_rule to zero
-        if demand_coherent_area[i]/full_load_hours < 0.2:
-            return 0
-        elif demand_coherent_area[j]/full_load_hours < 0.2:
-            return 0
-        else:
-            return distance_matrix[i, j]
+        return distance_matrix[i, j]
     m.line_length = en.Param(m.index_row, m.index_col, initialize=l_length)
 
     # ##########################################################################
@@ -253,14 +251,18 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
                          initialize=0)
     # set the largest demand zone to be part of the result
     m.q_bool[G].fix(1)
-
-
-    for i in range(fix_to_zero_index.shape[0]):
-        s, t = fix_to_zero_index[i, :]
-        m.l_bool[s, t].fix(0)
-        m.line_capacity[s, t].fix(0)
-    
-
+    for i in m.index_row:
+        m.l_bool[i, G].fix(0)
+        m.l_bool[i, i].fix(0)
+        m.line_capacity[i, G].fix(0)
+        m.line_capacity[i, i].fix(0)
+        
+    for i in m.index_row:
+        for j in m.index_col:
+            if distance_matrix[i, j] > max_pipe_length:
+                m.l_bool[i, j].fix(0)
+                m.line_capacity[i, j].fix(0)
+    '''
     for i in range(len(demand_coherent_area)):
         # Lowest transmission line capacity is 0.2 Mw. Intercept of the cost function
         # in the piecewise linear expresion is 242.87. It should be set to zero if the
@@ -271,7 +273,7 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
                 m.line_capacity[i, j].fix(0)
                 m.l_bool[j, i].fix(0)
                 m.line_capacity[j, i].fix(0)
-
+    '''
     # ##########################################################################
     # ########## Constraints:
     # ##########################################################################
@@ -291,7 +293,8 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
 
     def edge_connectivity_rule(m, i):
         if i == G:
-            return 0 == sum(m.l_bool[j, i] for j in m.index_row)
+            # l_bool[x, G] are already fixed to zero
+            return en.Constraint.Skip
         else:
             return m.q_bool[i] <= sum(m.l_bool[j, i] for j in m.index_row)
     m.edge_connectivity = en.Constraint(m.index_row,
@@ -308,19 +311,17 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
     m.edge_connectivity_2 = en.Constraint(m.index_row, m.index_col,
                                           rule=edge_connectivity_2_rule)
 
+    def edge_connectivity_3_rule(m, i):
+        if i == G:
+            return en.Constraint.Skip
+        else:
+            return sum(m.l_bool[h, i] for h in m.index_row) <= 1
+    m.edge_connectivity_3 = en.Constraint(m.index_row, rule=edge_connectivity_3_rule)
+
     def edge_active_rule(m, i, j):
         return 2*(m.l_bool[i, j] + m.l_bool[j, i]) <= m.q_bool[i] + m.q_bool[j]
     m.edge_active = en.Constraint(m.index_row, m.index_col,
                                   rule=edge_active_rule)
-
-    def self_loop_rule(m, i):
-        return m.l_bool[i, i] == 0
-    m.self_loop = en.Constraint(m.index_row, rule=self_loop_rule)
-
-    def uni_directed_edge_rule(m, i, j):
-        return m.l_bool[i, j] + m.l_bool[j, i] <= 1
-    m.uni_directed_edge = en.Constraint(m.index_row, m.index_col,
-                                        rule=uni_directed_edge_rule)
 
     def capacity_lower_bound_rule(m, i, j):
         return m.line_capacity[i, j] >= (m.l_bool[i, j]*m.q[j])/full_load_hours
@@ -339,7 +340,12 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
         return m.line_capacity[i, j] - m.l_bool[i, j]*m.cap_up <= 0
     m.force_cap_to_zero = en.Constraint(m.index_row, m.index_col,
                                         rule=force_cap_to_zero_rule)
-
+    '''
+    def force_cap_to_zero_2_rule(m, i, j):
+        return m.line_capacity[i, j] + 0.99 >= m.l_bool[i, j]
+    m.force_cap_to_zero_2 = en.Constraint(m.index_row, m.index_col,
+                                        rule=force_cap_to_zero_2_rule)
+    '''
     def capacity_flow_rule(m, i):
         if i == G:
             return sum(m.line_capacity[G, h] for h in m.index_col) == \
@@ -351,14 +357,6 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
                 m.q_bool[i]*m.q[i]/full_load_hours
     m.capacity_flow = en.Constraint(m.index_row, rule=capacity_flow_rule)
 
-    def self_loop_capacity_rule(m, i):
-        return m.line_capacity[i, i] == 0
-    m.self_loop_capacity = en.Constraint(m.index_row,
-                                         rule=self_loop_capacity_rule)
-
-
-
-    
     def f(m, i, j, x):
         if x >= pow_range_matrix[0] and x < pow_range_matrix[1]:
             return x * (cost_matrix[1] - cost_matrix[0])/(pow_range_matrix[1] - pow_range_matrix[0])
@@ -396,51 +394,6 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
     m.pw_con = en.Piecewise(m.index_row, m.index_col, m.line_cost, m.line_capacity,
                                 pw_pts=list(pow_range_matrix), pw_constr_type='EQ', f_rule=f)
     
-    
-    
-    
-    '''
-    # #################################################################
-    #bpts = list(np.linspace(0, 20, 201)) + list(np.linspace(21, max_cap + 2, 1482))
-    bpts = list(pow_range_matrix) + [pow_range_matrix[-1:][0] + 2]
-    def cost_func(m, i, j, xp):
-        # we not need j, but it is passed as the index for the constraint
-        return 3.83338211e-06*xp**3 - 6.60615285e-03*xp**2 + 5.22996971*xp + 2.42878414e+02
-
-    m.specific_cost = en.Piecewise(m.index_row, m.index_col, m.line_cost, m.line_capacity, pw_pts=bpts, pw_constr_type='EQ', f_rule=cost_func)
-
-    # #################################################################
-    
-    def cost_range_limit_rule(m, i, j, k):
-        return m.cost_range_bool[i, j, k] <= m.l_bool[i, j]
-    m.cost_range_limit = en.Constraint(m.index_row, m.index_col, m.index_cap,
-                                       rule=cost_range_limit_rule)
-
-    def cost_range_limit_2_rule(m, i, j, k):
-        if k == 0 or k == last_cost_step:
-            return en.Constraint.Skip
-        else:
-            return m.cost_range_bool[i, j, k+1] <= m.cost_range_bool[i, j, k]
-    m.cost_range_limit_2 = en.Constraint(m.index_row, m.index_col, m.index_cap,
-                                         rule=cost_range_limit_2_rule)
-
-    def cost_range_limit_3_rule(m, i, j):
-        return 0 <= m.line_capacity[i, j] - \
-            sum((m.pow_step_ranges[k] - m.pow_step_ranges[k-1]) *
-                m.cost_range_bool[i, j, k+1]
-                for k in m.index_cap if (k > 0 and k < last_cost_step))
-    m.cost_range_limit_3 = en.Constraint(m.index_row, m.index_col,
-                                         rule=cost_range_limit_3_rule)
-
-    def cost_range_limit_4_rule(m, i, j):
-        return 0 <= sum((m.pow_step_ranges[k] - m.pow_step_ranges[k-1]) *
-                        m.cost_range_bool[i, j, k]
-                        for k in m.index_cap if k > 0) - m.line_capacity[i, j]
-    m.cost_range_limit_4 = en.Constraint(m.index_row, m.index_col,
-                                         rule=cost_range_limit_4_rule)
-    '''
-    m.ccConstraints = en.ConstraintList()
-
     def obj_rule_1(m):
         # OBJ1: Revenue-Oriented Prize Collecting
         return sum(m.th[i]*m.q_bool[i]*m.q[i] for i in m.index_row) - \
@@ -462,45 +415,13 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
                          '"1" for Revenue-Oriented Prize Collection or "2" '
                          'for Profit-Oriented Prize Collection')
 
-
-
-    def convertYsToNetworkx():
-        """Convert the m's Y variables into a networkx object."""
-        ans = nx.Graph()
-        edges = [(i, j) for i in m.index_row
-                 for j in m.index_col if (en.value(m.l_bool[i, j]) == 1)]
-        ans.add_edges_from(edges)
-        return ans
-
-
-    def createConstForCC(m, cc):
-        cc = dict.fromkeys(cc)
-        return sum(m.l_bool[i, j] for i in m.index_row
-                   for j in m.index_col
-                   if ((i in cc) and (j in cc))) <= len(cc) - 1
-
-    done = False
-    results = None
-
-    # print(time.time() -st)
-    while not done:
-        # Solve once and add subtour elimination constraints if necessary
-        # Finish when there are no more subtours
-        results = solver.solve(m, report_timing=False, tee=False, logfile="gurobi.log")
-
-        # print(time.time() - st)
-        # print(value(m.obj))
-        graph = convertYsToNetworkx()
-        ccs = list(nx.connected_component_subgraphs(graph))
-        for cc in ccs:
-            m.ccConstraints.add(createConstForCC(m, cc))
-        number_of_nodes = sum(m.q_bool[i] for i in m.index_row)
-        if len(ccs) == 0:
-            done = True
-        elif ccs[0].number_of_nodes() == number_of_nodes:
-            done = True
+    results = solver.solve(m, report_timing=False, tee=False, logfile="gurobi.log")
+    print("Solver Termination: ", results.solver.termination_condition)
+    print("Solver Status: ", results.solver.status)
     term_cond = results.solver.termination_condition == TerminationCondition.optimal
-    # print('term_cond: ', term_cond)
+    if results.solver.status == SolverStatus.aborted:
+        term_cond = "aborted"
+
     '''
     ##################
     # save variable values to a csv file
@@ -526,11 +447,22 @@ def optimize_dist(threshold, cost_matrix, pow_range_matrix, distance_matrix,
         dist_inv += dh[i]*demand_coherent_area[i] * dist_cost_coherent_area[i]
     for i in range(n):
         for j in range(n):
-            if en.value(m.l_bool[i, j]) == 1:
+            if en.value(m.l_bool[i, j]) > 0:
                 trans_inv += en.value(m.line_cost[i, j]) * \
                                 en.value(m.line_length[i, j])
                 trans_line_length += en.value(m.line_length[i, j])
                 edge_list.append([i, j, en.value(m.line_capacity[i, j])])
+    '''
+    for i in range(n):
+        for j in range(n):
+            if en.value(m.l_bool[i, j]) > 0:
+                print(i, " , ", j, "\t capacity: ", en.value(m.line_capacity[i, j]), "\t line: ", en.value(m.l_bool[i, j]))
+    print("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
+    for i in range(n):
+        for j in range(n):
+            if en.value(m.line_capacity[i, j]) > 0:
+                print(i, " , ", j, "\t capacity: ", en.value(m.line_capacity[i, j]), "\t line: ", en.value(m.l_bool[i, j]))
+    '''
     # meter to km
     trans_line_length /= 1000
     dist_spec_cost = dist_inv/covered_demand

@@ -14,12 +14,13 @@ from CM.CM_TUW23.f8_show_in_graph import edge_representation
 
 
 def pre_opt(depreciation_time, interest_rate, grid_cost_ceiling,
-            trans_line_cap_cost, full_load_hours, in_raster_hdm,
+            trans_line_cap_cost, full_load_hours, mip_gap, in_raster_hdm,
             out_raster_coh_area_bool, out_raster_hdm_last_year,
             out_raster_dist_pipe_length, out_raster_maxDHdem,
-            out_raster_labels, out_raster_invest_Euro, out_shp_prelabel,
-            out_shp_label, out_shp_edges, out_shp_nodes, out_csv_solution,
-            output_directory, polygonize_region=False):
+            out_raster_economic_maxDHdem, out_raster_labels,
+            out_raster_invest_Euro, out_shp_prelabel, out_shp_label,
+            out_shp_edges, out_shp_nodes, out_csv_solution, output_directory,
+            polygonize_region=False):
     hdm_arr, geoTrans = raster_array(out_raster_hdm_last_year, return_gt=True)
     labels = raster_array(out_raster_labels, 'int16')
     nr_coherent = np.max(labels)
@@ -31,7 +32,7 @@ def pre_opt(depreciation_time, interest_rate, grid_cost_ceiling,
     hdm_1st_arr = raster_array(in_raster_hdm)
     dist_invest_arr = raster_array(out_raster_invest_Euro)
     maxDHdem_arr = raster_array(out_raster_maxDHdem)
-    # prepare dataframe for final answers
+    # prepare dataframe for final answers.
     heat_dem_coh_1st = np.zeros((nr_coherent))
     heat_dem_coh_last = np.zeros((nr_coherent))
     heat_dem_spec_area = np.zeros((nr_coherent))
@@ -88,8 +89,7 @@ def pre_opt(depreciation_time, interest_rate, grid_cost_ceiling,
     pow_range_matrix = trans_line_cap_cost[:, 0]
     term_cond, dh, edge_list = optimize_dist(grid_cost_ceiling, cost_matrix,
                                              pow_range_matrix, distance_matrix,
-                                             q, q_spec_cost)
-
+                                             q, q_spec_cost, mip_gap)
     grid_cost_header = 'Connected at %0.2f EUR/MWh' % grid_cost_ceiling
     df[grid_cost_header] = dh[:-6]
     df['label'] = df.index + 1
@@ -102,13 +102,14 @@ def pre_opt(depreciation_time, interest_rate, grid_cost_ceiling,
     df = df[headers]
 
     df.to_csv(out_csv_solution)
-    if polygonize_region and term_cond:
+    if polygonize_region and term_cond==True:
         economic_bool = dh[:-6]
         poly(heat_dem_coh_last, heat_dem_spec_area, q, q_spec_cost,
              economic_bool, area_coh_area, out_raster_coh_area_bool,
-             out_raster_labels, out_shp_prelabel, out_shp_label)
+             out_raster_labels, out_raster_maxDHdem,
+             out_raster_economic_maxDHdem, out_shp_prelabel, out_shp_label)
     node_label_list = np.arange(1, nr_coherent+1) * dh[0: -6]
-    if term_cond:
+    if term_cond==True:
         if len(edge_list) > 0:
             edge_representation(row_from_label, col_from_label, row_to_label,
                                 col_to_label, distance_matrix, node_label_list,

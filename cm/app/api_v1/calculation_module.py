@@ -8,8 +8,10 @@ from ..helper import generate_output_file_shp
 from ..helper import generate_output_file_csv
 from ..helper import create_zip_shapefiles
 import my_calculation_module_directory.CM.CM_TUW23.run_cm as CM23
-
+from my_calculation_module_directory.CM.CM_TUW0.rem_mk_dir import rm_file
 from ..constant import CM_NAME
+
+
 def calculation(output_directory, inputs_raster_selection, inputs_parameter_selection):
     '''
     def calculation()
@@ -27,19 +29,18 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
         full_load_hours: full load hours require for calculating the right pipe dimension, by default it is set to 3000.
         in_raster_gfa: gross floor area map for the selected zone.
         in_raster_hdm: heat density map for the selected zone.
-        
 
     Outputs:
-        out_raster_maxDHdem: max demand should be covered by DH during the investment period [MWh].
-        out_raster_invest_Euro: distribution grid investment [EUR/MWh].
-        out_raster_hdm_last_year: heat density map at the end of investment period.
-        out_raster_dist_pipe_length: distribution grid pipeline length [m/m2].
-        out_raster_coh_area_bool: shows both economic and non-economic coherent areas.
-        out_raster_hdm_in_dh_reg_last_year: heat densities in the last year of investment within the coherent areas.
+        out_raster_maxDHdem: max demand should be covered by DH during the investment period [MWh],
+        out_raster_invest_Euro: distribution grid investment [EUR/MWh],
+        out_raster_hdm_last_year: heat density map at the end of investment period,
+        out_raster_dist_pipe_length: distribution grid pipeline length [m/m2],
+        out_raster_coh_area_bool: shows both economic and non-economic coherent areas,
+        out_raster_hdm_in_dh_reg_last_year: heat densities in the last year of investment within the coherent areas,
         out_raster_labels,
         out_shp_prelabel,
         out_shp_label,
-        out_csv_solution
+        out_csv_solution.
     '''
     # input parameters
     investment_start_year = int(inputs_parameter_selection["investment_start_year"])
@@ -53,6 +54,7 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
     c1 = float(inputs_parameter_selection["c1"])
     c2 = float(inputs_parameter_selection["c2"])
     full_load_hours = int(inputs_parameter_selection["full_load_hours"])
+    mip_gap = 0.01*float(inputs_parameter_selection["mip_gap"])
 
     
     # input raster layers: (gfa:= gross floor area; hdm:= heat density map)
@@ -61,6 +63,7 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
     
     # output raster layers
     out_raster_maxDHdem = generate_output_file_tif(output_directory)
+    out_raster_economic_maxDHdem = generate_output_file_tif(output_directory)
     out_raster_invest_Euro = generate_output_file_tif(output_directory)
     out_raster_hdm_last_year = generate_output_file_tif(output_directory)
     out_raster_dist_pipe_length = generate_output_file_tif(output_directory)
@@ -88,9 +91,11 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
             c1,
             c2,
             full_load_hours,
+            mip_gap,
             in_raster_gfa,
             in_raster_hdm,
             out_raster_maxDHdem,
+            out_raster_economic_maxDHdem,
             out_raster_invest_Euro,
             out_raster_hdm_last_year,
             out_raster_dist_pipe_length,
@@ -103,15 +108,20 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
             out_csv_solution,
             output_directory
             )
-
-    result = dict()
     
+    rm_file(out_raster_maxDHdem, out_raster_maxDHdem[:-4] + ".tfw",
+            out_raster_invest_Euro, out_raster_invest_Euro[:-4] + ".tfw",
+            out_raster_dist_pipe_length, out_raster_dist_pipe_length[:-4] + ".tfw",
+            out_raster_coh_area_bool, out_raster_coh_area_bool[:-4] + ".tfw",
+            out_raster_labels, out_raster_labels[:-4] + ".tfw")
+    result = dict()
 
-    if opt_term_cond:
+    if opt_term_cond==True:
         out_shp_label = create_zip_shapefiles(output_directory, out_shp_label)
         result['name'] = CM_NAME
         result["raster_layers"]=[
-              {"name": "heat demand density in the last year of the investment","path": out_raster_hdm_last_year, "type": "heat"}
+              {"name": "heat demand density in the last year of the investment","path": out_raster_hdm_last_year, "type": "heat"},
+              {"name": "heat demand covered by DH in the last year of the investment","path": out_raster_economic_maxDHdem, "type": "heat"}
               ]
         if len(edge_list) > 0:
             out_shp_edges = create_zip_shapefiles(output_directory, out_shp_edges)
@@ -131,8 +141,8 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
                               {"red":222, "green":45, "blue":38, "opacity":0.7, "value":" No", "label":"Not Economic"},
                               {"red": 44, "green":162, "blue": 95, "opacity":0.7, "value":" Yes", "label":"Economic"}
                               ]}]
-
         result["tabular"]=[{"name": "Summary of results","path": out_csv_solution}]
+
     horizon = investment_last_year - investment_start_year + 1
     if horizon > depreciation_time:
         output_summary = output_summary + [{"unit": "-", "name": "Warning: Study horizon is longer than depreciation time. The calculation was done only till the end of depreciation time!", "value": 0.0}]

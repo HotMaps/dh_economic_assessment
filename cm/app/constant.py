@@ -1,4 +1,4 @@
-
+CELERY_BROKER_TIMEOUT = 36000
 CELERY_BROKER_URL_DOCKER = 'amqp://admin:mypass@rabbit:5672/'
 CELERY_BROKER_URL_LOCAL = 'amqp://localhost/'
 
@@ -78,7 +78,7 @@ INPUTS_CALCULATION_MODULE = [
               {'input_name': 'DH grid cost ceiling',
                'input_type': 'input',
                'input_parameter_name': 'grid_cost_ceiling',
-               'input_value': '15',
+               'input_value': '25',
                'input_unit': 'EUR/MWh',
                'input_min': 0.1,
                'input_max': 200,
@@ -110,12 +110,26 @@ INPUTS_CALCULATION_MODULE = [
                'input_min': 0,
                'input_max': 8760,
                'cm_id': CM_ID
-               }
+               },
+               {'input_name': 'MIPGap*1e-2 (Smaller gap leads to higher accuracy at cost of higher time)',
+                'input_type': 'range',
+                'input_parameter_name': 'mip_gap',
+                'input_value': '10',
+                'input_priority': '1',
+                'input_unit': ' ',
+                #'input_min': 0.01,
+                #'input_max': 0.10,
+                #'input_step': 0.01,
+                'input_min':1,
+                'input_max':10,
+                'input_step': 1,
+                'cm_id': CM_ID
+                 }
               ]
 
 
 SIGNATURE = {
-    "category": "DEMAND",
+    "category": "Demand",
     "authorized_scale":["LAU 2","Hectare"],
     "cm_name": CM_NAME,
     "description_link": "https://github.com/HotMaps/hotmaps_wiki/wiki/CM-District-heating-potential-economic-assessment",

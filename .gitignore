@@ -27,7 +27,8 @@ pip-log.txt
 .coverage
 .tox
 nosetests.xml
-
+hdm_besancon.tif
+gfa_besancon.tif
 # Translations
 *.mo
 

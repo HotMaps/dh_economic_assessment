@@ -10,12 +10,14 @@ path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.
 if path not in sys.path:
     sys.path.append(path)
 from CM.CM_TUW1.read_raster import raster_array as RA
+from CM.CM_TUW19 import run_cm as CM19
 
 
 def add_label_field(heat_dem_coh_last, heat_dem_spec_area, q, q_spec_cost,
                     economic_bool, area_coh_area, out_raster_coh_area_bool,
-                    out_raster_labels, out_shp_prelabel, out_shp_label,
-                    epsg=3035):
+                    out_raster_labels, out_raster_maxDHdem,
+                    out_raster_economic_maxDHdem, out_shp_prelabel,
+                    out_shp_label, epsg=3035):
     color_map = ["#de2d26", "#2ca25f"]
     label_list = []
     
@@ -24,6 +26,9 @@ def add_label_field(heat_dem_coh_last, heat_dem_spec_area, q, q_spec_cost,
     if os.path.exists(out_shp_label):
         outDriver.DeleteDataSource(out_shp_label)
     bool_arr, gt = RA(out_raster_coh_area_bool, return_gt=True)
+    maxDHdem_arr = RA(out_raster_maxDHdem)
+    economic_maxDHdem_arr = maxDHdem_arr * bool_arr.astype(int)
+    CM19.main(out_raster_economic_maxDHdem, gt, "float64", economic_maxDHdem_arr)
     label_arr = RA(out_raster_labels)
     numLabels = np.max(label_arr)
     coords = measurements.center_of_mass(bool_arr, label_arr,
@@ -108,7 +113,9 @@ def add_label_field(heat_dem_coh_last, heat_dem_spec_area, q, q_spec_cost,
 
 def polygonize(heat_dem_coh_last, heat_dem_spec_area, q, q_spec_cost,
                economic_bool, area_coh_area, out_raster_coh_area_bool,
-               out_raster_labels, out_shp_prelabel, out_shp_label, epsg=3035):
+               out_raster_labels, out_raster_maxDHdem,
+               out_raster_economic_maxDHdem, out_shp_prelabel, out_shp_label,
+               epsg=3035):
     # save the coherent areas in shapefile format
     raster = gdal.Open(out_raster_coh_area_bool)
     band = raster.GetRasterBand(1)
@@ -128,4 +135,6 @@ def polygonize(heat_dem_coh_last, heat_dem_spec_area, q, q_spec_cost,
     outDataSource = outLayer = band = None
     add_label_field(heat_dem_coh_last, heat_dem_spec_area, q, q_spec_cost,
                economic_bool, area_coh_area, out_raster_coh_area_bool,
-               out_raster_labels, out_shp_prelabel, out_shp_label)
+               out_raster_labels, out_raster_maxDHdem,
+               out_raster_economic_maxDHdem, out_shp_prelabel,
+               out_shp_label)
