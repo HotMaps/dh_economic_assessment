@@ -206,9 +206,9 @@ In this section it's explain how to handle the differents kind of inputs
 
 Signature describes the calculation module needed parameters and how to use it. This signature can be found in **constants.py** file. the SIGNATURE must be modified by the developer this signature can be divided into 2 parts,
 see bellow:
-   
-    
-    
+
+
+​    
     INPUTS_CALCULATION_MODULE=  [
         { 'input_name': 'Reduction factor',
           'input_type': 'input',
@@ -229,8 +229,9 @@ see bellow:
           'cm_id': CM_ID
           }
     ]
-    
+
   
+
 
 
     SIGNATURE = {
@@ -621,7 +622,7 @@ this indicators will be displayed on the result panel of the frontend.
  --------------------------------
  if an unknown type of layer is generated(layer that is not of type heat,gross_floor_area, building_volume,solar_optimal_tota ) a new field must be created,
  the field **"symbology"** and the raster must be set on type "custom". the field symbology must contains the RGB colors, which are values between 0 - 255, the opacity which are  values between 0 - 1,  the value of range  defined and the label of range  defined
- 
+
   ```python
               "raster_layers":[
                                {"name": "district heating coherent areas","path": output_raster1, "type": "custom", "symbology": [{"red":250,"green":159,"blue":181,"opacity":0.8,"value":"1","label":"DH Areas"}]}]
@@ -629,7 +630,7 @@ this indicators will be displayed on the result panel of the frontend.
                                
                
   ```
- 
+
   **Structure of vector as output:**
   ----------------------------------
 
@@ -860,5 +861,8 @@ python run.py
 [bar]: https://i0.wp.com/belajarphp.net/wp-content/uploads/2016/10/chartJS-bar-chart-1.png?w=946&ssl=1
 [logoinput]: https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/Textbox2.gif/220px-Textbox2.gif
 
-[logoselect]: https://upload.wikimedia.org/wikipedia/commons/d/d1/Drop-down_list_example.PNG ""
-[logoradio]: https://upload.wikimedia.org/wikipedia/commons/c/cb/Radio_button.png ""
+[logoselect]: https://upload.wikimedia.org/wikipedia/commons/d/d1/Drop-down_list_example.PNG
+[logoradio]: https://upload.wikimedia.org/wikipedia/commons/c/cb/Radio_button.png
+
+
+
