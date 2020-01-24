@@ -70,10 +70,10 @@ INPUTS_CALCULATION_MODULE = [
              {'input_name': 'Interest rate',
               'input_type': 'input',
               'input_parameter_name': 'interest_rate',
-              'input_value': '0.05',
-              'input_unit': ' ',
+              'input_value': '5',
+              'input_unit': '%',
               'input_min': 0,
-              'input_max': 1, 'cm_id': CM_ID
+              'input_max': 100, 'cm_id': CM_ID
               },
               {'input_name': 'DH grid cost ceiling',
                'input_type': 'input',
