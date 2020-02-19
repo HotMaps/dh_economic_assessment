@@ -71,7 +71,10 @@ def pre_opt(depreciation_time, interest_rate, grid_cost_ceiling,
     Reference: GIS based analysis of future district heating in Denmark
     Author: Steffan Nielsen, Bernd Moeller
     '''
-    annuity_factor = (interest_rate*(1+interest_rate)**depreciation_time)/((1+interest_rate)**depreciation_time-1)
+    if interest_rate > 0:
+        annuity_factor = (interest_rate*(1+interest_rate)**depreciation_time)/((1+interest_rate)**depreciation_time-1)
+    else:
+        annuity_factor = 1
     '''
     tl_cost_copy = np.copy(trans_line_cap_cost)
     temp_q = np.copy(q)
