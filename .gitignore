@@ -29,6 +29,10 @@ pip-log.txt
 nosetests.xml
 hdm_besancon.tif
 gfa_besancon.tif
+00_gfa_Density_Map.tif
+50_Heat_Density_Map.tif
+gfa_test.tif
+hdm_test.tif
 # Translations
 *.mo
 
