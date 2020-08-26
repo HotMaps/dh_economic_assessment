@@ -70,10 +70,10 @@ INPUTS_CALCULATION_MODULE = [
              {'input_name': 'Interest rate',
               'input_type': 'input',
               'input_parameter_name': 'interest_rate',
-              'input_value': '0.05',
-              'input_unit': ' ',
+              'input_value': '5',
+              'input_unit': '%',
               'input_min': 0,
-              'input_max': 1, 'cm_id': CM_ID
+              'input_max': 100, 'cm_id': CM_ID
               },
               {'input_name': 'DH grid cost ceiling',
                'input_type': 'input',
@@ -141,7 +141,8 @@ SIGNATURE = {
         {"type": "gross_floor_area", "description": "Select gross floor area density layer."}
     ],
     "cm_url": "Do not add anything",
-    "cm_description": "this computation module can be used for the economic assessment of DH potential and DH grid investment.",
+    "cm_description": "This calculation module can be used for the economic assessment of DH potential and DH grid investment.",
     "cm_id": CM_ID,
+    "wiki_url":"https://wiki.hotmaps.eu/en/CM-District-heating-potential-economic-assessment",
     'inputs_calculation_module': INPUTS_CALCULATION_MODULE
 }

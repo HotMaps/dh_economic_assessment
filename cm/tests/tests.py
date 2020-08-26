@@ -27,6 +27,7 @@ class TestAPI(unittest.TestCase):
 
 
     def test_compute(self):
+        #path
         raster_file1_path = 'tests/data/gfa_Wien.tif'
         raster_file2_path = 'tests/data/hdm_Wien.tif'
         # simulate copy from HTAPI to CM
@@ -46,7 +47,7 @@ class TestAPI(unittest.TestCase):
         inputs_parameter_selection["accumulated_energy_saving"] = "0.1"
         inputs_parameter_selection["dh_connection_rate_first_year"] = "0.3"
         inputs_parameter_selection["dh_connection_rate_last_year"] = "0.6"
-        inputs_parameter_selection["interest_rate"] = "0.05"
+        inputs_parameter_selection["interest_rate"] = "5"
         inputs_parameter_selection["grid_cost_ceiling"] = "25"
         inputs_parameter_selection["c1"] = "212"
         inputs_parameter_selection["c2"] = "4464"

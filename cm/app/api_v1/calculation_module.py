@@ -22,7 +22,7 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
         accumulated_energy_saving: accumulated energy saving at the end of investment period [0:1].
         dh_connection_rate_first_year: share of demand covered by DH to the total demand in DH areas in the first year of investment [0:1].
         dh_connection_rate_last_year: share of demand covered by DH to the total demand in DH areas in the last year of investment [0:1].
-        interest_rate: interest rate [0:1].
+        interest_rate: interest rate [0:100] in percent.
         grid_cost_ceiling: The cost in EUR/MWh that should not be exceeded.
         c1: the construction cost constant (EUR/m); default values for inner city area, outer city area and park areas are are 292.38, 218.78, 154.37 EUR/m, respectively.
         c2: the construction cost coefficient (EUR/m2); default values for inner city area, outer city area and park areas are are 2067.13, 1763.5, 1408.76 EUR/m2, respectively.
@@ -49,7 +49,7 @@ def calculation(output_directory, inputs_raster_selection, inputs_parameter_sele
     accumulated_energy_saving = float(inputs_parameter_selection["accumulated_energy_saving"])
     dh_connection_rate_first_year = float(inputs_parameter_selection["dh_connection_rate_first_year"])
     dh_connection_rate_last_year = float(inputs_parameter_selection["dh_connection_rate_last_year"])
-    interest_rate = float(inputs_parameter_selection["interest_rate"])
+    interest_rate = float(inputs_parameter_selection["interest_rate"])/100.0
     grid_cost_ceiling = float(inputs_parameter_selection["grid_cost_ceiling"])
     c1 = float(inputs_parameter_selection["c1"])
     c2 = float(inputs_parameter_selection["c2"])

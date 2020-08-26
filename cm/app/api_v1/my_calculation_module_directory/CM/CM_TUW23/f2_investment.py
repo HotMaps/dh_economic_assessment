@@ -13,6 +13,8 @@ from CM.CM_TUW19 import run_cm as CM19
 def annuity(r, period):
     period = int(period)
     r = float(r)
+    if r == 0:
+        return 1
     return ((1+r)**period - 1) / (r*(1+r)**period)
 
 
@@ -74,10 +76,13 @@ def dh_demand(c1, c2, raster_plotratio, raster_hdm, start_year, last_year,
             q_max = np.copy(q_new)
         q += q_new / (1 + float(interest))**i
     if remaining_years > 0:
-        alpha_horizon = annuity(interest, horizon-1)
-        alpha_depr = annuity(interest, depr_period)
-        rest_annuity_factor = alpha_depr - alpha_horizon
-        q = q + q_new * rest_annuity_factor
+        if interest > 0:
+            alpha_horizon = annuity(interest, horizon-1)
+            alpha_depr = annuity(interest, depr_period)
+            rest_annuity_factor = alpha_depr - alpha_horizon
+            q = q + q_new * rest_annuity_factor
+        else:
+            q = q + q_new * remaining_years
     linearHeatDensity = q_max / L
     # this step is performed to avoid negative average pipe diameter
     LHD_THRESHOLD = -dA_intercept/dA_slope
