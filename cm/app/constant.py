@@ -141,7 +141,8 @@ SIGNATURE = {
         {"type": "gross_floor_area", "description": "Select gross floor area density layer."}
     ],
     "cm_url": "Do not add anything",
-    "cm_description": "this computation module can be used for the economic assessment of DH potential and DH grid investment.",
+    "cm_description": "This calculation module can be used for the economic assessment of DH potential and DH grid investment.",
     "cm_id": CM_ID,
+    "wiki_url":"https://wiki.hotmaps.eu/en/CM-District-heating-potential-economic-assessment",
     'inputs_calculation_module': INPUTS_CALCULATION_MODULE
 }
