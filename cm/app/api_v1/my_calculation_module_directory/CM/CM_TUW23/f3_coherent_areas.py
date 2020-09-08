@@ -23,6 +23,8 @@ def distribuition_costs(pixT, DH_threshold, dist_grid_cost,
     rast_origin = geo_transform[0], geo_transform[3]
     coh_areas = np.zeros_like(maxDHdem_arr, 'int8')
     reg_filter = maxDHdem_arr.astype(bool).astype('int8')
+    # DH_threshold in MWH
+    DH_threshold_MWh = DH_threshold * 1000
     for pix_threshold in pixT:
         # calculate coherent regions with given thresholds and cut them to
         # LAU2 levels
@@ -41,7 +43,7 @@ def distribuition_costs(pixT, DH_threshold, dist_grid_cost,
             q = np.sum(maxDHdem_arr[temp])
             q_inv = np.sum(invest_Euro_arr[temp])
             q_spec_cost = q_inv / q
-            if q_spec_cost <= dist_grid_cost and q >= DH_threshold:
+            if q_spec_cost <= dist_grid_cost and q >= DH_threshold_MWh:
                 coh_areas[temp] = 1
                 heat_density_map_last_year[temp] = 0
         labels = None 

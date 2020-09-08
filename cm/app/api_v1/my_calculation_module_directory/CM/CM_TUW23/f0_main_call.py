@@ -51,8 +51,8 @@ def main(investment_start_year, investment_last_year, depreciation_time,
     in_raster_hdm_arr = None
     grid_factor = 1.05
     pixT = 10*np.arange(1, 135, 0.1)
-    # DH Threshold to MWh
-    DH_threshold = 1000
+    # DH Threshold in GWh/year
+    DH_threshold = 1
     trans_line_cap_cost = np.array([[0 , 0], [0.2 , 195], [0.3 , 206],
                                     [0.6 , 220], [1.2 , 240],
                                     [1.9 , 261], [3.6 , 288],
