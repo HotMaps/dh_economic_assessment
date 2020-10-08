@@ -48,7 +48,7 @@ class TestAPI(unittest.TestCase):
         inputs_parameter_selection["dh_connection_rate_first_year"] = "0.3"
         inputs_parameter_selection["dh_connection_rate_last_year"] = "0.6"
         inputs_parameter_selection["interest_rate"] = "5"
-        inputs_parameter_selection["grid_cost_ceiling"] = "25"
+        inputs_parameter_selection["grid_cost_ceiling"] = "15"
         inputs_parameter_selection["c1"] = "212"
         inputs_parameter_selection["c2"] = "4464"
         inputs_parameter_selection["full_load_hours"] = "3000"
