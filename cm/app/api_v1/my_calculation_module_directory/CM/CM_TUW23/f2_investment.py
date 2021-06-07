@@ -88,7 +88,7 @@ def dh_demand(c1, c2, raster_plotratio, raster_hdm, start_year, last_year,
     LHD_THRESHOLD = -dA_intercept/dA_slope
     filtered_LHD = (np.log(linearHeatDensity) < LHD_THRESHOLD).astype(int)
     elements = np.nonzero(filtered_LHD)[0]
-    dA = dA_slope * (np.log(linearHeatDensity)) + dA_slope
+    dA = dA_slope * (np.log(linearHeatDensity)) + dA_intercept
     dA[elements] = 0
     # lower limit of linear heat densities at 1.5 GJ/m was set. Below this
     # threshold, pipe diameters of 0.02m were applied uniformly for all hectare
