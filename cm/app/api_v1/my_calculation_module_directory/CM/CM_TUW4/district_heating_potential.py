@@ -6,10 +6,11 @@ Created on July 11 2017
 """
 import os
 import sys
+import time
 import numpy as np
 from scipy.ndimage import binary_dilation
 from scipy.ndimage import binary_erosion
-#from scipy.ndimage import binary_fill_holes
+from scipy.ndimage import binary_fill_holes
 from scipy.ndimage import measurements
 path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.
                                                        abspath(__file__))))
@@ -123,11 +124,16 @@ def DHReg(heat_density_map, pix_threshold, DH_threshold, in_orig=None):
     # Factor 1000 for conversion from GWh/a to MWh/a
     DH_threshold = DH_threshold * 1000
     if isinstance(heat_density_map, np.ndarray):
+        if not in_orig:
+            raise TypeError('The raster origin is of None type!')
         gt = in_orig
         hdm_arr = heat_density_map
     elif isinstance(heat_density_map, str):
         hdm_arr, gt = RA(heat_density_map, return_gt=True)
+    # division by 1000 for MWh to GWh
+    total_heat_demand = np.sum(hdm_arr)/1000
     hdm_arr_filtered = hdm_arr * (hdm_arr > pix_threshold)
     DH_Selected_Region = DHRegions(hdm_arr_filtered, DH_threshold)
+    hdm_dh_region_cut = hdm_arr*(DH_Selected_Region > 0).astype(int)
     # return DH_Selected_Region and raster geotransform array
-    return DH_Selected_Region, gt
+    return DH_Selected_Region, hdm_dh_region_cut, gt, total_heat_demand

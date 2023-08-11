@@ -43,19 +43,17 @@ def array2raster(outRasterPath, geo_transform, dataType, array, noDataValue=0,
     outRasterSRS.ImportFromEPSG(OutputRasterSRS)
     outRaster.SetProjection(outRasterSRS.ExportToWkt())
     outRaster.GetRasterBand(1).SetNoDataValue(noDataValue)
+
+    if dataType == 'int8' or dataType == 'uint16':
+        # This can be used for dtype int8
+        ct = gdal.ColorTable()
+        ct.SetColorEntry(noDataValue, (0, 0, 0, 255))
+        ct.SetColorEntry(1, (250, 159, 181, 255))
+        '''
+        for i in range(1, 1+np.max(array)):
+            ct.SetColorEntry(i, tuple(np.random.choice(range(256), size=4)))
+        '''
+        outRaster.GetRasterBand(1).SetColorTable(ct)
+
     outRaster.GetRasterBand(1).WriteArray(array)
     outRaster.FlushCache()
-
-
-
-if __name__ == "__main__":
-    start = time.time()
-    output_dir = path + os.sep + 'Outputs'
-    outRasterPath = output_dir + os.sep + 'array2raster.tif'
-    array = np.ones((50, 20))
-    dataType = 'float32'
-    geo_transform = (4285400, 100, 0, 2890500, 0, -100)
-    noDataValue = 0
-    array2raster(outRasterPath, geo_transform, dataType, array, noDataValue)
-    elapsed = time.time() - start
-    print("%0.3f seconds" % elapsed)

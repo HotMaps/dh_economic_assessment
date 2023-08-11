@@ -38,3 +38,15 @@ def rm_file(file, *args):
     for arg in args:
         if os.path.exists(arg):
             os.remove(arg)
+
+def rm_dir(directory, *args):
+    if os.path.exists(directory):
+        shutil.rmtree(directory, ignore_errors=False,
+                      onerror=handleRemoveReadonly)
+    for arg in args:
+        if os.path.exists(arg):
+            shutil.rmtree(arg, ignore_errors=False,
+                          onerror=handleRemoveReadonly)
+
+def copy_dir(source, destination):
+    shutil.copytree(source, destination)
